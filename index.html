@@ -8,16 +8,16 @@ header{height:48px;flex:0 0 48px;display:flex;align-items:center;justify-content
 .stage{position:relative;flex:1;min-height:80px;overflow:hidden;border-radius:19px;background:#080808;box-shadow:0 12px 35px #0008}
 #video,#render{position:absolute;width:100%;height:100%;inset:0;object-fit:cover}#video{opacity:0}#render{display:block}
 .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px;background:#10100e}.placeholder p{color:var(--muted);font-size:13px;line-height:1.5;max-width:260px}
-.film-strip{position:absolute;z-index:5;left:0;right:0;bottom:12px;display:flex;gap:8px;padding:10px 12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;background:linear-gradient(180deg,transparent,#08080888 24%,#080808bb)}
+.film-strip{position:relative;z-index:2;flex:0 0 72px;height:72px;display:flex;align-items:center;gap:8px;padding:8px 0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;background:transparent}
 .film-strip::-webkit-scrollbar{display:none}.film-chip{flex:0 0 116px;scroll-snap-align:center;min-height:54px;border:1px solid #ffffff55;border-radius:12px;background:#141410d9;color:var(--cream);text-align:left;padding:9px 10px;backdrop-filter:blur(12px)}
 .film-chip b{display:block;font-size:10px;letter-spacing:.08em;white-space:nowrap}.film-chip small{display:block;color:#c8c4b8;font-size:9px;margin-top:5px}.film-chip.active{border-color:var(--accent);background:#403321ed;box-shadow:inset 0 0 0 1px var(--accent)}
 
 .tag{position:absolute;top:12px;left:12px;border:1px solid #ffffff55;background:#0007;padding:7px 10px;border-radius:30px;font-size:10px;letter-spacing:.12em}.film-tag{left:auto;right:12px}
 .controls{height:82px;flex:0 0 82px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;z-index:5}
 .round{width:43px;height:43px;border-radius:50%;border:1px solid #77766b;background:#282821;color:var(--cream);font-size:19px}.shutter{width:68px;height:68px;border-radius:50%;border:5px solid #eee9dc;background:var(--accent);box-shadow:0 0 0 3px #171714,0 0 0 4px #77766b}.shutter:disabled{opacity:.35}
-.sheet{position:absolute;z-index:4;left:0;right:0;bottom:calc(82px + env(safe-area-inset-bottom));height:64px;max-height:calc(100% - 150px);background:#22221e;border:1px solid #49483e;border-bottom:0;border-radius:20px 20px 0 0;box-shadow:0 -12px 35px #0008;display:flex;flex-direction:column;transition:height .25s ease;overflow:hidden}
-.sheet.expanded{height:min(72vh,620px);height:min(72dvh,620px)}
-.sheet-head{height:64px;min-height:64px;display:flex;align-items:center;justify-content:center;position:relative;touch-action:pan-y;cursor:pointer}
+.sheet{position:relative;z-index:2;left:auto;right:auto;bottom:auto;flex:0 0 58px;width:100%;height:58px;max-height:58px;background:#22221e;border:1px solid #49483e;border-radius:16px;box-shadow:0 -5px 20px #0005;display:flex;flex-direction:column;transition:flex-basis .25s ease,height .25s ease;overflow:hidden}
+.sheet.expanded{flex-basis:min(46dvh,440px);height:min(46dvh,440px);max-height:min(46dvh,440px)}
+.sheet-head{height:58px;min-height:58px;display:flex;align-items:center;justify-content:center;position:relative;touch-action:pan-y;cursor:pointer}
 .handle{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:5px;background:#77766b}
 .sheet-title{font-size:13px;font-weight:700;letter-spacing:.04em}.sheet-sub{font-size:10px;color:var(--muted);margin-top:3px;text-align:center}.chevron{position:absolute;right:18px;font-size:18px;color:var(--muted)}
 .sheet-content{overflow-y:auto;overscroll-behavior:contain;padding:0 16px 24px;flex:1;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none}.expanded .sheet-content{opacity:1;pointer-events:auto}
@@ -29,15 +29,15 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 @media(min-width:600px){.app{padding-top:8px}.stage{max-height:760px}}
 </style></head><body><div class="app">
 <header><div class="brand">FUJI <span>POCKET</span></div><div class="status">DIGITAL FILM CAMERA</div></header>
-<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><span class="tag">FP · 02</span><span class="tag film-tag" id="filmLabel">CLASSIC CHROME</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div><div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
+<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><span class="tag">FP · 02</span><span class="tag film-tag" id="filmLabel">CLASSIC CHROME</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
+</main>
+<div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
 <button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm</small></button>
 <button class="film-chip" data-preset="fuji"><b>FUJIFILM</b><small>soft · natural</small></button>
 <button class="film-chip" data-preset="vintage"><b>VINTAGE</b><small>faded · analog</small></button>
 <button class="film-chip" data-preset="tokyowarm"><b>TOKYO WARM</b><small>amber · cream</small></button>
 <button class="film-chip" data-preset="tokyoshadow"><b>TOKYO SHADOW</b><small>cyan · deep</small></button>
 </div>
-</main>
-<div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
 <div class="sheet-content" id="sheetContent"><h2>Lens & beeldbewerking</h2><div class="adjust">
 <label for="aperture">Aperture <b id="apertureValue">f/16</b></label><input id="aperture" type="range" min="1.4" max="16" step=".1" value="16"><p class="hint">Gesimuleerde achtergrondonscherpte. Dit is geen optisch diafragma.</p>
@@ -45,6 +45,8 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <label for="definition">Definition / glow <b id="definitionValue">0</b></label><input id="definition" type="range" min="-100" max="100" value="0"><p class="hint">Negatief = zachte gloed · positief = lokale scherpte en microcontrast.</p>
 <div class="sheet-actions"><button class="action" id="reset">Reset instellingen</button><button class="action primary" id="closeSheet">Gereed</button></div>
 </div><p class="note">LUT-stijl kleurtransformaties, geïnspireerd op filmkarakteristieken. Geen officiële Fujifilm-profielen of Kodak-scans.</p></div></section>
+<div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
+
 </div>
 <script>
 'use strict';
