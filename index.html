@@ -35,7 +35,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm negative</small></button>
 <button class="film-chip" data-preset="portra"><b>KODAK PORTRA</b><small>400 · portrait</small></button>
 <button class="film-chip" data-preset="ektar"><b>KODAK EKTAR</b><small>100 · vivid</small></button>
-<button class="film-chip" data-preset="fuji"><b>FUJIFILM</b><small>Classic Chrome</small></button>
+<button class="film-chip" data-preset="classicchrome"><b>FUJIFILM</b><small>Classic Chrome</small></button>
 <button class="film-chip" data-preset="pro400h"><b>FUJIFILM PRO</b><small>400H · pastel</small></button>
 </div>
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
@@ -107,7 +107,38 @@ let out=oklabToLinear(L,a,bb);if(out.some(v=>v<0||v>1)){let lo=0,hi=1;for(let q=
 return {n,width,data};
 }
 function setLutTexture(lut){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,lutTexture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,lut.width,lut.n,0,gl.RGBA,gl.UNSIGNED_BYTE,lut.data);gl.uniform1i(locations.lut,1);gl.uniform1i(locations.lutN,lut.n);gl.uniform3fv(locations.lutDomainMin,lut.domainMin||[0,0,0]);gl.uniform3fv(locations.lutDomainMax,lut.domainMax||[1,1,1])}
-function uploadLut(name){const lut=makeLut(profiles[name]);setLutTexture(lut);document.getElementById('filmLabel').textContent=profiles[name].name}
+const builtinProfileSpecs={
+ gold:{file:'./profiles/gold_200.rgba.b64',title:'KODAK GOLD 200',kind:'rgba'},
+ portra:{file:'./profiles/portra_400.rgba.b64',title:'KODAK PORTRA 400',kind:'rgba'},
+ ektar:{file:'./profiles/ektar_100.rgba.b64',title:'KODAK EKTAR 100',kind:'rgba'},
+ classicchrome:{file:'./profiles/fujifilm_classic_chrome.xmp',title:'FUJIFILM CLASSIC CHROME',kind:'xmp'},
+ pro400h:{file:'./profiles/pro_400h.rgba.b64',title:'FUJIFILM PRO 400H',kind:'rgba'}
+};
+const builtinLutCache={},builtinLutPromises={};
+async function getBuiltinLut(name){
+ if(builtinLutCache[name])return builtinLutCache[name];
+ if(builtinLutPromises[name])return builtinLutPromises[name];
+ const spec=builtinProfileSpecs[name];if(!spec)throw Error('Onbekend filmprofiel: '+name);
+ builtinLutPromises[name]=(async()=>{
+  const response=await fetch(spec.file,{cache:'force-cache'});if(!response.ok)throw Error('Filmprofiel kon niet worden geladen ('+response.status+').');
+  let lut;
+  if(spec.kind==='xmp'){
+   if(!window.FujiPocketXmp)throw Error('XMP-engine is nog niet geladen. Herlaad de app.');
+   lut=window.FujiPocketXmp.build(window.FujiPocketXmp.parse(await response.text()));
+  }else{
+   const encoded=(await response.text()).trim(),binary=atob(encoded),data=new Uint8Array(binary.length);
+   for(let i=0;i<binary.length;i++)data[i]=binary.charCodeAt(i);
+   const n=33;if(data.length!==n*n*n*4)throw Error('Filmprofielbestand is beschadigd.');
+   lut={n,width:n*n,data,domainMin:[0,0,0],domainMax:[1,1,1],title:spec.title};
+  }
+  builtinLutCache[name]=lut;return lut;
+ })().catch(err=>{delete builtinLutPromises[name];throw err;});
+ return builtinLutPromises[name];
+}
+async function uploadLut(name){
+ const spec=builtinProfileSpecs[name],lut=await getBuiltinLut(name);
+ if(glReady&&preset===name&&!customLut){setLutTexture(lut);document.getElementById('filmLabel').textContent=spec.title;}
+}
 let customLut=null;
 function parseCube(source){let n=0,title='CUSTOM LUT',domainMin=[0,0,0],domainMax=[1,1,1],rows=[];for(const raw of source.split(/\r?\n/)){const line=raw.replace(/#.*$/,'').trim();if(!line)continue;let m;if((m=line.match(/^TITLE\s+["']?(.*?)["']?$/i))){title=m[1].trim()||title;continue}if((m=line.match(/^LUT_3D_SIZE\s+(\d+)/i))){n=Number(m[1]);continue}if((m=line.match(/^DOMAIN_MIN\s+(.+)$/i))){domainMin=m[1].trim().split(/\s+/).map(Number);continue}if((m=line.match(/^DOMAIN_MAX\s+(.+)$/i))){domainMax=m[1].trim().split(/\s+/).map(Number);continue}if(/^(LUT_1D_SIZE|LUT_1D_INPUT_RANGE)/i.test(line))continue;const v=line.split(/\s+/).map(Number);if(v.length===3&&v.every(Number.isFinite))rows.push(v)}if(n<2||n>65)throw Error('Ongeldige LUT_3D_SIZE (ondersteund: 2–65).');if(rows.length!==n*n*n)throw Error('Onvolledige LUT: '+rows.length+' van '+(n*n*n)+' kleurregels.');if(domainMin.length!==3||domainMax.length!==3||!domainMin.concat(domainMax).every(Number.isFinite))throw Error('Ongeldige domeinwaarden.');const data=new Uint8Array(n*n*n*4);for(let g=0;g<n;g++)for(let b=0;b<n;b++)for(let r=0;r<n;r++){const src=b*n*n+g*n+r,dst=(g*n*n+b*n+r)*4;for(let c=0;c<3;c++)data[dst+c]=Math.round(Math.max(0,Math.min(1,rows[src][c]))*255);data[dst+3]=255}return {n,width:n*n,data,domainMin,domainMax,title}}
 function uploadCustomLut(lut){setLutTexture(lut);document.getElementById('filmLabel').textContent=lut.title.toUpperCase().slice(0,28);document.getElementById('lutStatus').textContent='Actieve LUT: '+lut.title+' ('+lut.n+'³). Kies een filmprofiel om terug te schakelen.'}
@@ -123,7 +154,7 @@ document.getElementById('loadXmp').addEventListener('click',()=>document.getElem
 document.getElementById('xmpFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const settings=FujiPocketXmp.parse(await file.text());customLut=FujiPocketXmp.build(settings);let chip=document.getElementById('customProfileChip');if(!chip){chip=document.createElement('button');chip.id='customProfileChip';chip.className='film-chip';document.getElementById('filmStrip').appendChild(chip);}chip.textContent='XMP · '+customLut.title;chip.onclick=()=>{if(glReady)uploadCustomLut(customLut);document.querySelectorAll('.film-chip').forEach(b=>b.classList.toggle('active',b===chip));};chip.click();document.getElementById('lutStatus').textContent='Actieve XMP-preset: '+customLut.title+'. Vertaalde globale toon- en HSL-instellingen worden toegepast op livebeeld en foto.';}catch(err){document.getElementById('lutStatus').textContent='XMP niet geladen: '+err.message;}e.target.value='';});
 document.getElementById('lutFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const lut=parseCube(await file.text());customLut=lut;if(glReady)uploadCustomLut(lut);else{document.getElementById('filmLabel').textContent=lut.title.toUpperCase().slice(0,28);document.getElementById('lutStatus').textContent='LUT geladen: '+lut.title+'. Start de camera om deze toe te passen.'}document.querySelectorAll('.film-chip').forEach(b=>b.classList.remove('active'))}catch(err){document.getElementById('lutStatus').textContent='LUT niet geladen: '+err.message}e.target.value=''});
 document.getElementById('flip').addEventListener('click',()=>{facing=facing==='environment'?'user':'environment';startCamera()});
-function choose(name){if(!profiles[name])return;preset=name;customLut=null;document.getElementById('lutStatus').textContent='Eigen .cube-LUT of .xmp-preset importeren kan ook.';if(glReady)uploadLut(name);else document.getElementById('filmLabel').textContent=profiles[name].name;document.querySelectorAll('.film-chip').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));}
+function choose(name){if(!builtinProfileSpecs[name])return;preset=name;customLut=null;document.getElementById('lutStatus').textContent='Filmprofiel wordt geladen…';document.getElementById('filmLabel').textContent=builtinProfileSpecs[name].title;document.querySelectorAll('.film-chip').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));uploadLut(name).then(()=>{if(preset===name)document.getElementById('lutStatus').textContent='Actief profiel: '+builtinProfileSpecs[name].title+'.'}).catch(err=>{document.getElementById('lutStatus').textContent='Filmprofiel niet geladen: '+err.message;});}
 document.querySelectorAll('.film-chip').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.preset)));
 function updateLabels(){document.getElementById('grainValue').textContent=grain.value;document.getElementById('definitionValue').textContent=definition.value}
 [grain,definition].forEach(el=>el.addEventListener('input',updateLabels));updateLabels();
@@ -137,6 +168,6 @@ document.getElementById('closeSheet').addEventListener('click',()=>setSheet(fals
 let touchY=0;sheetHead.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});sheetHead.addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(dy<-25)setSheet(true);if(dy>25)setSheet(false)},{passive:true});
 document.getElementById('sheetContent').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});document.getElementById('sheetContent').addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(e.target.scrollTop===0&&dy>80)setSheet(false)},{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream){cancelAnimationFrame(raf);raf=0;stream.getTracks().forEach(t=>t.stop());stream=null;video.pause();video.srcObject=null;shoot.disabled=true;document.getElementById('cameraStatus').textContent='CAMERA GEPAUZEERD';placeholder.style.display='flex';placeholder.querySelector('p').textContent='Tik op Camera starten om de camera opnieuw te activeren.'}});window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);raf=0;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}});render.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(raf);raf=0;glReady=false;fallbackActive=true;render.style.display='none';fallbackRender.style.display='block';document.getElementById('cameraStatus').textContent='BASISMODUS · GPU HERSTELD';if(stream)loop()});
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=37',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=38',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
 window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('gold');
 </script><script src='./xmp-import.js?v=1'></script></body></html>
