@@ -8,7 +8,7 @@ header{height:48px;flex:0 0 48px;display:flex;align-items:center;justify-content
 .stage{position:relative;flex:1;min-height:80px;overflow:hidden;border-radius:19px;background:#080808;box-shadow:0 12px 35px #0008}
 #video,#render{position:absolute;width:100%;height:100%;inset:0;object-fit:cover}#video{opacity:0}#render{display:block}
 .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px;background:#10100e}.placeholder p{color:var(--muted);font-size:13px;line-height:1.5;max-width:260px}
-.film-strip{position:absolute;z-index:3;left:0;right:0;bottom:12px;display:flex;gap:8px;padding:10px 12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;background:linear-gradient(180deg,transparent,#08080888 24%,#080808bb)}
+.film-strip{position:absolute;z-index:5;left:0;right:0;bottom:12px;display:flex;gap:8px;padding:10px 12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;background:linear-gradient(180deg,transparent,#08080888 24%,#080808bb)}
 .film-strip::-webkit-scrollbar{display:none}.film-chip{flex:0 0 116px;scroll-snap-align:center;min-height:54px;border:1px solid #ffffff55;border-radius:12px;background:#141410d9;color:var(--cream);text-align:left;padding:9px 10px;backdrop-filter:blur(12px)}
 .film-chip b{display:block;font-size:10px;letter-spacing:.08em;white-space:nowrap}.film-chip small{display:block;color:#c8c4b8;font-size:9px;margin-top:5px}.film-chip.active{border-color:var(--accent);background:#403321ed;box-shadow:inset 0 0 0 1px var(--accent)}
 
@@ -41,7 +41,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
 <div class="sheet-content" id="sheetContent"><h2>Lens & beeldbewerking</h2><div class="adjust">
 <label for="aperture">Aperture <b id="apertureValue">f/16</b></label><input id="aperture" type="range" min="1.4" max="16" step=".1" value="16"><p class="hint">Gesimuleerde achtergrondonscherpte. Dit is geen optisch diafragma.</p>
-<label for="grain">Film grain <b id="grainValue">12</b></label><input id="grain" type="range" min="0" max="100" value="30">
+<label for="grain">Film grain <b id="grainValue">30</b></label><input id="grain" type="range" min="0" max="100" value="30">
 <label for="definition">Definition / glow <b id="definitionValue">0</b></label><input id="definition" type="range" min="-100" max="100" value="0"><p class="hint">Negatief = zachte gloed · positief = lokale scherpte en microcontrast.</p>
 <div class="sheet-actions"><button class="action" id="reset">Reset instellingen</button><button class="action primary" id="closeSheet">Gereed</button></div>
 </div><p class="note">LUT-stijl kleurtransformaties, geïnspireerd op filmkarakteristieken. Geen officiële Fujifilm-profielen of Kodak-scans.</p></div></section>
@@ -52,11 +52,11 @@ const video=document.getElementById('video'),render=document.getElementById('ren
 const aperture=document.getElementById('aperture'),grain=document.getElementById('grain'),definition=document.getElementById('definition');
 let stream=null,facing='environment',preset='gold',lastPhoto=null,raf=0,glReady=false,program=null,videoTexture=null,lutTexture=null,locations={},lastW=0,lastH=0;
 const profiles={
-gold:{name:'KODAK GOLD 200',sat:1.08,contrast:1.10,toe:.018,shoulder:.035,warm:.045,cyan:0,green:.012,redHue:-.012,greenHue:.018,blueHue:-.018},
-fuji:{name:'FUJIFILM',sat:.96,contrast:1.045,toe:.012,shoulder:.055,warm:.012,cyan:.006,green:.008,redHue:.006,greenHue:-.012,blueHue:.008},
-vintage:{name:'VINTAGE',sat:.78,contrast:.96,toe:.045,shoulder:.075,warm:.032,cyan:.012,green:.012,redHue:-.012,greenHue:.012,blueHue:-.012},
-tokyowarm:{name:'TOKYO WARM',sat:.86,contrast:1.12,toe:.018,shoulder:.035,warm:.052,cyan:.006,green:.012,redHue:-.012,greenHue:-.018,blueHue:-.02},
-tokyoshadow:{name:'TOKYO SHADOW',sat:.88,contrast:1.24,toe:.008,shoulder:.025,warm:.012,cyan:.042,green:.026,redHue:-.015,greenHue:.014,blueHue:-.012}
+gold:{name:'KODAK GOLD 200',sat:1.22,contrast:1.13,fade:.012,warm:.105,cool:.025,green:.018,redHue:-9,greenHue:8,blueHue:-12,redSat:1.08,greenSat:1.12,blueSat:.78,highlight:.035,shadow:.018},
+fuji:{name:'FUJIFILM',sat:1.10,contrast:1.10,fade:.006,warm:.012,cool:.045,green:.045,redHue:5,greenHue:-13,blueHue:-12,redSat:.92,greenSat:1.18,blueSat:1.15,highlight:.018,shadow:.028},
+vintage:{name:'VINTAGE',sat:.76,contrast:.96,fade:.075,warm:.075,cool:.018,green:.012,redHue:-7,greenHue:5,blueHue:-8,redSat:.92,greenSat:.82,blueSat:.72,highlight:.025,shadow:.035},
+tokyowarm:{name:'TOKYO WARM',sat:1.02,contrast:1.14,fade:.018,warm:.125,cool:.012,green:.025,redHue:-12,greenHue:-8,blueHue:-15,redSat:.88,greenSat:1.05,blueSat:.76,highlight:.045,shadow:.012},
+tokyoshadow:{name:'TOKYO SHADOW',sat:1.08,contrast:1.22,fade:.008,warm:.055,cool:.115,green:.065,redHue:-8,greenHue:-15,blueHue:-18,redSat:.82,greenSat:1.12,blueSat:1.22,highlight:.045,shadow:.065}
 };
 const vs='#version 300 es\nin vec2 p;out vec2 uv;void main(){uv=(p+1.0)*0.5;gl_Position=vec4(p,0.0,1.0);}';
 const fs='#version 300 es\nprecision highp float;in vec2 uv;out vec4 outColor;uniform highp sampler2D image;uniform highp sampler2D lutAtlas;uniform vec2 texel;uniform vec2 scaleUV;uniform float grain;uniform float definition;uniform float aperture;uniform float time;\nconst float LUT_N=33.0;const float LUT_W=1089.0;\nvec3 lutSample(vec3 c){vec3 p=clamp(c,0.0,1.0)*(LUT_N-1.0);float b0=floor(p.b),b1=min(b0+1.0,LUT_N-1.0);float fy=fract(p.b);vec2 uv0=vec2((b0*LUT_N+p.r+0.5)/LUT_W,(p.g+0.5)/LUT_N);vec2 uv1=vec2((b1*LUT_N+p.r+0.5)/LUT_W,(p.g+0.5)/LUT_N);return mix(texture(lutAtlas,uv0).rgb,texture(lutAtlas,uv1).rgb,fy);}\nfloat hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7))+time*17.0)*43758.5453);}\nvoid main(){vec2 q=(vec2(uv.x,1.0-uv.y)-0.5)*scaleUV+0.5;vec3 c=texture(image,q).rgb;float edge=smoothstep(.12,.72,distance(q,vec2(.5,.48)));float blurAmt=(16.0-aperture)/14.6*.010*edge;vec3 soft=(texture(image,q+vec2(blurAmt,0)).rgb+texture(image,q-vec2(blurAmt,0)).rgb+texture(image,q+vec2(0,blurAmt)).rgb+texture(image,q-vec2(0,blurAmt)).rgb)*.25;c=mix(c,soft,clamp(blurAmt*90.0,0.0,.78));vec3 graded=lutSample(c);float d=definition/100.0;vec3 avg=(texture(image,q+vec2(texel.x,0)).rgb+texture(image,q-vec2(texel.x,0)).rgb+texture(image,q+vec2(0,texel.y)).rgb+texture(image,q-vec2(0,texel.y)).rgb)*.25;graded+=(c-avg)*d*.85;float fine=hash(gl_FragCoord.xy)-.5;float coarse=hash(floor(gl_FragCoord.xy*.45))-.5;float n=(fine*.72+coarse*.28)*grain*.00115;float lum=dot(graded,vec3(.2126,.7152,.0722));n*=mix(.72,1.18,1.0-lum);graded+=vec3(n);outColor=vec4(clamp(graded,0.0,1.0),1.0);}';
@@ -65,20 +65,26 @@ function rgbToHsl(r,g,b){let max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(
 function hslToRgb(h,s,l){h=((h%360)+360)%360;let c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return[r+m,g+m,b+m]}
 function makeLut(profile){
 const n=33,width=n*n,data=new Uint8Array(width*n*4);let k=0;
+const clamp=v=>Math.max(0,Math.min(1,v));
+const smooth=(a,b,x)=>{let t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
 for(let g=0;g<n;g++)for(let b=0;b<n;b++)for(let r=0;r<n;r++){
-const R=r/(n-1),G=g/(n-1),B=b/(n-1),mx=Math.max(R,G,B),mn=Math.min(R,G,B),l=(mx+mn)*.5,d=mx-mn;
-let h=0,sat=0;if(d>1e-6){sat=d/(1-Math.abs(2*l-1));if(mx===R)h=((G-B)/d)%6;else if(mx===G)h=(B-R)/d+2;else h=(R-G)/d+4;h=(h*60+360)%360;}
-const red=Math.max(0,1-Math.min(h,360-h)/50),green=Math.max(0,1-Math.abs(h-120)/62),blue=Math.max(0,1-Math.abs(h-235)/58);
-h=(h+red*profile.redHue*360+green*profile.greenHue*360+blue*profile.blueHue*360+360)%360;
-sat=Math.max(0,Math.min(1,sat*profile.sat*(1+red*.06-green*.05)));
-const y=.2126*R+.7152*G+.0722*B;
-let tone=(y-.5)*profile.contrast+.5+profile.toe*Math.pow(1-y,2)-profile.shoulder*Math.pow(y,2);tone=Math.max(0,Math.min(1,tone));
-const shadow=Math.pow(1-y,2),high=Math.pow(y,2);
-const rr=tone-profile.cyan*shadow+profile.warm*high,gg=tone+profile.green*shadow+profile.warm*.34*high,bb=tone+profile.cyan*shadow-profile.warm*.58*high;
-const outY=Math.max(0,Math.min(1,.2126*rr+.7152*gg+.0722*bb));
-const hh=h/60,cc=(1-Math.abs(2*outY-1))*sat,xx=cc*(1-Math.abs(hh%2-1)),m=outY-cc/2;
-let a=0,bv=0,c=0;if(hh<1){a=cc;bv=xx}else if(hh<2){a=xx;bv=cc}else if(hh<3){bv=cc;c=xx}else if(hh<4){bv=xx;c=cc}else if(hh<5){a=xx;c=cc}else{a=cc;c=xx}
-data[k++]=Math.round(Math.max(0,Math.min(1,a+m))*255);data[k++]=Math.round(Math.max(0,Math.min(1,bv+m))*255);data[k++]=Math.round(Math.max(0,Math.min(1,c+m))*255);data[k++]=255;
+const R=r/(n-1),G=g/(n-1),B=b/(n-1),[h,sat,y]=rgbToHsl(R,G,B);
+const red=Math.max(0,1-Math.min(h,360-h)/55),green=Math.max(0,1-Math.abs(h-120)/65),blue=Math.max(0,1-Math.abs(h-235)/65);
+let hue=(h+red*profile.redHue+green*profile.greenHue+blue*profile.blueHue+360)%360;
+let colorSat=sat*profile.sat*(1+red*(profile.redSat-1)+green*(profile.greenSat-1)+blue*(profile.blueSat-1));
+let lum=clamp((y-.5)*profile.contrast+.5+profile.fade*Math.pow(1-y,2)-profile.highlight*Math.pow(y,2));
+let rgb=hslToRgb(hue,clamp(colorSat),lum);
+const sh=Math.pow(1-smooth(.08,.78,y),1.25),hi=Math.pow(smooth(.22,.96,y),1.35),mid=1-sh-hi*.55;
+rgb[0]+=profile.warm*hi+profile.cool*sh*-0.72+profile.warm*.12*mid;
+rgb[1]+=profile.green*sh+profile.warm*.28*hi+profile.cool*sh*.22;
+rgb[2]+=profile.cool*sh+profile.warm*hi*-0.62-profile.green*sh*.16;
+const out=hslToRgb(hue,clamp(colorSat*(1-.08*sh)),clamp(.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]));
+const baseY=.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];
+const scale=baseY>1e-5?out[2]/baseY:1;
+data[k++]=Math.round(clamp(rgb[0]*scale)*255);
+data[k++]=Math.round(clamp(rgb[1]*scale)*255);
+data[k++]=Math.round(clamp(rgb[2]*scale)*255);
+data[k++]=255;
 }
 return {n,width,data};
 }
