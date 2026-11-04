@@ -48,6 +48,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
 
 </div>
+<script src='./xmp-import.js'></script>
 <script>
 'use strict';
 const video=document.getElementById('video'),render=document.getElementById('render'),fallbackRender=document.getElementById('fallbackRender'),fallbackCtx=fallbackRender.getContext('2d',{alpha:false}),gl=render.getContext('webgl2',{alpha:false,antialias:false,preserveDrawingBuffer:true,powerPreference:'high-performance'}),placeholder=document.getElementById('placeholder'),shoot=document.getElementById('shoot'),save=document.getElementById('save'),sheet=document.getElementById('sheet'),sheetHead=document.getElementById('sheetHead');
@@ -168,6 +169,6 @@ document.getElementById('closeSheet').addEventListener('click',()=>setSheet(fals
 let touchY=0;sheetHead.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});sheetHead.addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(dy<-25)setSheet(true);if(dy>25)setSheet(false)},{passive:true});
 document.getElementById('sheetContent').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});document.getElementById('sheetContent').addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(e.target.scrollTop===0&&dy>80)setSheet(false)},{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream){cancelAnimationFrame(raf);raf=0;stream.getTracks().forEach(t=>t.stop());stream=null;video.pause();video.srcObject=null;shoot.disabled=true;document.getElementById('cameraStatus').textContent='CAMERA GEPAUZEERD';placeholder.style.display='flex';placeholder.querySelector('p').textContent='Tik op Camera starten om de camera opnieuw te activeren.'}});window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);raf=0;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}});render.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(raf);raf=0;glReady=false;fallbackActive=true;render.style.display='none';fallbackRender.style.display='block';document.getElementById('cameraStatus').textContent='BASISMODUS · GPU HERSTELD';if(stream)loop()});
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=39',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=40',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
 window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('gold');
-</script><script src='./xmp-import.js'></script></body></html>
+</script></body></html>
