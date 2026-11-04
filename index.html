@@ -84,7 +84,7 @@ function loop(){renderFrame();raf=requestAnimationFrame(loop)}
 async function startCamera(){try{if(!glReady)initGL();if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:facing,width:{ideal:3840},height:{ideal:2160},frameRate:{ideal:30,max:30}}});video.srcObject=stream;await video.play();placeholder.style.display='none';shoot.disabled=false;cancelAnimationFrame(raf);loop()}catch(e){placeholder.style.display='flex';placeholder.querySelector('p').textContent='Camera of beeldverwerking niet beschikbaar. Open in Safari en sta cameratoegang toe. '+(e.message||'');shoot.disabled=true}}
 document.getElementById('start').addEventListener('click',startCamera);
 document.getElementById('flip').addEventListener('click',()=>{facing=facing==='environment'?'user':'environment';startCamera()});
-function choose(name){preset=name;uploadLut(name);document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));}
+function choose(name){preset=name;if(glReady)uploadLut(name);else document.getElementById('filmLabel').textContent=profiles[name].name;document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));}
 document.querySelectorAll('.preset').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.preset)));
 function updateLabels(){document.getElementById('apertureValue').textContent='f/'+Number(aperture.value).toFixed(1);document.getElementById('grainValue').textContent=grain.value;document.getElementById('definitionValue').textContent=definition.value}
 [aperture,grain,definition].forEach(el=>el.addEventListener('input',updateLabels));updateLabels();
