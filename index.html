@@ -29,6 +29,8 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
 <div class="sheet-content" id="sheetContent"><h2>Filmsimulaties</h2><div class="presets">
+<button class="preset active" data-preset="tokyowarm"><b>Tokyo Warm</b><small>Crème licht · amber · zachte schaduwen</small></button>
+<button class="preset" data-preset="tokyoshadow"><b>Tokyo Shadow</b><small>Cyaan lucht · diepe groenschaduwen · contrast</small></button>
 <button class="preset active" data-preset="chrome"><b>Classic Chrome</b><small>Koele schaduwen · ingetogen rood</small></button>
 <button class="preset" data-preset="classicneg"><b>Classic Negative</b><small>Kleurverschuiving · diepe tonen</small></button>
 <button class="preset" data-preset="astia"><b>Astia Soft</b><small>Rijke kleur · zachte huidtinten</small></button>
@@ -51,6 +53,8 @@ const video=document.getElementById('video'),render=document.getElementById('ren
 const aperture=document.getElementById('aperture'),grain=document.getElementById('grain'),definition=document.getElementById('definition');
 let stream=null,facing='environment',preset='chrome',lastPhoto=null,raf=0,glReady=false,program=null,videoTexture=null,lutTexture=null,locations={},lastW=0,lastH=0;
 const profiles={
+tokyowarm:{name:'TOKYO WARM',sat:.88,contrast:1.13,black:.018,high:.98,shadow:[.008,.003,-.006],highlight:[.055,.026,-.018],redHue:-.012,greenHue:-.018,blueHue:-.025,redSat:.88,greenSat:.82,blueSat:.78,warmth:.055,coolShadows:.008,fade:.012,greenShadow:.006},
+tokyoshadow:{name:'TOKYO SHADOW',sat:.91,contrast:1.27,black:.008,high:.955,shadow:[-.018,.008,.025],highlight:[.025,.018,-.008],redHue:-.018,greenHue:.012,blueHue:-.018,redSat:.9,greenSat:.84,blueSat:.86,warmth:.018,coolShadows:.032,fade:0,greenShadow:.028},
 chrome:{name:'CLASSIC CHROME',sat:.78,contrast:1.12,black:.012,high:.96,shadow:[-.012,.006,.025],highlight:[.025,.012,-.012],redHue:-.025,greenHue:-.025,blueHue:.018,redSat:.86,greenSat:.83,blueSat:.78},
 classicneg:{name:'CLASSIC NEGATIVE',sat:1.02,contrast:1.2,black:.018,high:.95,shadow:[-.015,.025,.04],highlight:[.045,.012,-.025],redHue:-.055,greenHue:.045,blueHue:-.035,redSat:.92,greenSat:.94,blueSat:.9},
 astia:{name:'ASTIA SOFT',sat:1.08,contrast:1.01,black:.018,high:.985,shadow:[.008,.006,.018],highlight:[.018,.008,.002],redHue:.005,greenHue:-.012,blueHue:.008,redSat:1.03,greenSat:.98,blueSat:1.04},
@@ -65,18 +69,25 @@ const fs='#version 300 es\nprecision highp float;in vec2 uv;out vec4 outColor;un
 function shader(type,src){const sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
 function rgbToHsl(r,g,b){let max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2;if(max!==min){let d=max-min;s=d/(1-Math.abs(2*l-1));if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,s,l]}
 function hslToRgb(h,s,l){h=((h%360)+360)%360;let c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return[r+m,g+m,b+m]}
-function makeLut(profile){const n=17,data=new Uint8Array(n*n*n*4);let k=0;for(let z=0;z<n;z++)for(let y=0;y<n;y++)for(let x=0;x<n;x++){let r=x/(n-1),g=y/(n-1),b=z/(n-1),hsl=rgbToHsl(r,g,b),h=hsl[0],s=hsl[1],l=hsl[2];let red=Math.max(0,1-Math.min(Math.abs(h-0),Math.abs(h-360))/48),yellow=Math.max(0,1-Math.abs(h-52)/42),green=Math.max(0,1-Math.abs(h-120)/58),cyan=Math.max(0,1-Math.abs(h-185)/45),blue=Math.max(0,1-Math.abs(h-235)/55);let p=profile;
-h+=red*p.redHue*360+green*p.greenHue*360+blue*p.blueHue*360;
-s*=p.sat*(1+red*(p.redSat-1)+green*(p.greenSat-1)+blue*(p.blueSat-1));
-let shadow=Math.pow(1-l,2),highlight=Math.pow(l,2);let rr=r,gg=g,bb=b;
-rr=(rr-.5)*p.contrast+.5;gg=(gg-.5)*p.contrast+.5;bb=(bb-.5)*p.contrast+.5;
-rr+=p.shadow[0]*shadow+p.highlight[0]*highlight;gg+=p.shadow[1]*shadow+p.highlight[1]*highlight;bb+=p.shadow[2]*shadow+p.highlight[2]*highlight;
-let lum=.2126*rr+.7152*gg+.0722*bb;let shaped=lum<.5?lum*(1-p.black)+p.black*.5:lum+(1-lum)*(p.high-1);let factor=lum>.001?shaped/lum:1;rr*=factor;gg*=factor;bb*=factor;
-let out=hslToRgb(h,Math.min(1.25,Math.max(0,s)),Math.min(1,Math.max(0,(rr+gg+bb)/3))); // blend hue-selective grade with tonal channel response
-let mix=.58;rr=rr*(1-mix)+out[0]*mix;gg=gg*(1-mix)+out[1]*mix;bb=bb*(1-mix)+out[2]*mix;
-if(p===profiles['400h']){} // explicit profile identity remains data-driven above
-data[k++]=Math.round(Math.max(0,Math.min(1,rr))*255);data[k++]=Math.round(Math.max(0,Math.min(1,gg))*255);data[k++]=Math.round(Math.max(0,Math.min(1,bb))*255);data[k++]=255}
-return {n,data}}
+function makeLut(profile){
+const n=33,data=new Uint8Array(n*n*n*4);let k=0;
+for(let z=0;z<n;z++)for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+let r=x/(n-1),g=y/(n-1),b=z/(n-1),[h,s,l]=rgbToHsl(r,g,b),p=profile;
+const red=Math.max(0,1-Math.min(h,360-h)/48),green=Math.max(0,1-Math.abs(h-120)/58),blue=Math.max(0,1-Math.abs(h-235)/55);
+h+=red*(p.redHue||0)*360+green*(p.greenHue||0)*360+blue*(p.blueHue||0)*360;
+s=Math.max(0,Math.min(1,s*(p.sat||1)*(1+red*((p.redSat||1)-1)+green*((p.greenSat||1)-1)+blue*((p.blueSat||1)-1))));
+const lum=.2126*r+.7152*g+.0722*b,shadow=Math.pow(1-lum,2),highlight=Math.pow(lum,2);
+let tone=(lum-.5)*(p.contrast||1)+.5;tone+=-(p.black||0)*shadow+(1-lum)*(p.fade||0);tone=Math.max(0,Math.min(1,tone));
+const split=p.shadow||[0,0,0],hi=p.highlight||[0,0,0];
+let rr=tone+(split[0]||0)*shadow+(hi[0]||0)*highlight+(p.warmth||0)*highlight-(p.coolShadows||0)*shadow;
+let gg=tone+(split[1]||0)*shadow+(hi[1]||0)*highlight+(p.warmth||0)*highlight*.38+(p.greenShadow||0)*shadow;
+let bb=tone+(split[2]||0)*shadow+(hi[2]||0)*highlight-(p.warmth||0)*highlight*.58+(p.coolShadows||0)*shadow;
+const targetLum=.2126*rr+.7152*gg+.0722*bb;
+const adjusted=hslToRgb(h,s,Math.max(0,Math.min(1,targetLum)));
+data[k++]=Math.round(Math.max(0,Math.min(1,adjusted[0]))*255);data[k++]=Math.round(Math.max(0,Math.min(1,adjusted[1]))*255);data[k++]=Math.round(Math.max(0,Math.min(1,adjusted[2]))*255);data[k++]=255;
+}
+return {n,data};
+}
 function uploadLut(name){const lut=makeLut(profiles[name]);gl.bindTexture(gl.TEXTURE_3D,lutTexture);gl.texImage3D(gl.TEXTURE_3D,0,gl.RGBA8,lut.n,lut.n,lut.n,0,gl.RGBA,gl.UNSIGNED_BYTE,lut.data);gl.uniform1i(locations.lut,1);document.getElementById('filmLabel').textContent=profiles[name].name}
 function initGL(){if(!gl)throw Error('WebGL2 wordt niet ondersteund in deze browser.');program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);let p=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(p);gl.vertexAttribPointer(p,2,gl.FLOAT,false,0,0);videoTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,videoTexture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.uniform1i(gl.getUniformLocation(program,'image'),0);lutTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_3D,lutTexture);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_WRAP_R,gl.CLAMP_TO_EDGE);locations={lut:gl.getUniformLocation(program,'lut'),texel:gl.getUniformLocation(program,'texel'),scaleUV:gl.getUniformLocation(program,'scaleUV'),grain:gl.getUniformLocation(program,'grain'),definition:gl.getUniformLocation(program,'definition'),aperture:gl.getUniformLocation(program,'aperture'),time:gl.getUniformLocation(program,'time')};glReady=true;uploadLut(preset)}
 function renderFrame(targetW,targetH){if(!glReady||!stream||video.readyState<2)return;let w=targetW||render.clientWidth*devicePixelRatio,h=targetH||render.clientHeight*devicePixelRatio;w=Math.max(2,Math.floor(w));h=Math.max(2,Math.floor(h));if(render.width!==w||render.height!==h){render.width=w;render.height=h;gl.viewport(0,0,w,h)}gl.useProgram(program);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,videoTexture);try{gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video)}catch(e){return}gl.uniform2f(locations.texel,1/video.videoWidth,1/video.videoHeight);let sourceAspect=video.videoWidth/video.videoHeight,targetAspect=w/h;gl.uniform2f(locations.scaleUV,Math.min(1,targetAspect/sourceAspect),Math.min(1,sourceAspect/targetAspect));gl.uniform1f(locations.grain,Number(grain.value));gl.uniform1f(locations.definition,Number(definition.value));gl.uniform1f(locations.aperture,Number(aperture.value));gl.uniform1f(locations.time,performance.now()/1000);gl.drawArrays(gl.TRIANGLE_STRIP,0,4)}
