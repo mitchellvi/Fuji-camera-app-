@@ -8,10 +8,14 @@ header{height:48px;flex:0 0 48px;display:flex;align-items:center;justify-content
 .stage{position:relative;flex:1;min-height:80px;overflow:hidden;border-radius:19px;background:#080808;box-shadow:0 12px 35px #0008}
 #video,#render{position:absolute;width:100%;height:100%;inset:0;object-fit:cover}#video{opacity:0}#render{display:block}
 .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px;background:#10100e}.placeholder p{color:var(--muted);font-size:13px;line-height:1.5;max-width:260px}
+.film-strip{position:absolute;z-index:3;left:0;right:0;bottom:12px;display:flex;gap:8px;padding:10px 12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;background:linear-gradient(180deg,transparent,#08080888 24%,#080808bb)}
+.film-strip::-webkit-scrollbar{display:none}.film-chip{flex:0 0 116px;scroll-snap-align:center;min-height:54px;border:1px solid #ffffff55;border-radius:12px;background:#141410d9;color:var(--cream);text-align:left;padding:9px 10px;backdrop-filter:blur(12px)}
+.film-chip b{display:block;font-size:10px;letter-spacing:.08em;white-space:nowrap}.film-chip small{display:block;color:#c8c4b8;font-size:9px;margin-top:5px}.film-chip.active{border-color:var(--accent);background:#403321ed;box-shadow:inset 0 0 0 1px var(--accent)}
+
 .tag{position:absolute;top:12px;left:12px;border:1px solid #ffffff55;background:#0007;padding:7px 10px;border-radius:30px;font-size:10px;letter-spacing:.12em}.film-tag{left:auto;right:12px}
 .controls{height:82px;flex:0 0 82px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;z-index:5}
 .round{width:43px;height:43px;border-radius:50%;border:1px solid #77766b;background:#282821;color:var(--cream);font-size:19px}.shutter{width:68px;height:68px;border-radius:50%;border:5px solid #eee9dc;background:var(--accent);box-shadow:0 0 0 3px #171714,0 0 0 4px #77766b}.shutter:disabled{opacity:.35}
-.sheet{position:absolute;z-index:4;left:0;right:0;bottom:calc(82px + env(safe-area-inset-bottom));height:74px;max-height:calc(100% - 150px);background:#22221e;border:1px solid #49483e;border-bottom:0;border-radius:20px 20px 0 0;box-shadow:0 -12px 35px #0008;display:flex;flex-direction:column;transition:height .25s ease;overflow:hidden}
+.sheet{position:absolute;z-index:4;left:0;right:0;bottom:calc(82px + env(safe-area-inset-bottom));height:64px;max-height:calc(100% - 150px);background:#22221e;border:1px solid #49483e;border-bottom:0;border-radius:20px 20px 0 0;box-shadow:0 -12px 35px #0008;display:flex;flex-direction:column;transition:height .25s ease;overflow:hidden}
 .sheet.expanded{height:min(72vh,620px);height:min(72dvh,620px)}
 .sheet-head{height:64px;min-height:64px;display:flex;align-items:center;justify-content:center;position:relative;touch-action:pan-y;cursor:pointer}
 .handle{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:5px;background:#77766b}
@@ -25,24 +29,19 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 @media(min-width:600px){.app{padding-top:8px}.stage{max-height:760px}}
 </style></head><body><div class="app">
 <header><div class="brand">FUJI <span>POCKET</span></div><div class="status">DIGITAL FILM CAMERA</div></header>
-<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><span class="tag">FP · 02</span><span class="tag film-tag" id="filmLabel">CLASSIC CHROME</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div></main>
+<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><span class="tag">FP · 02</span><span class="tag film-tag" id="filmLabel">CLASSIC CHROME</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div><div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
+<button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm</small></button>
+<button class="film-chip" data-preset="fuji"><b>FUJIFILM</b><small>soft · natural</small></button>
+<button class="film-chip" data-preset="vintage"><b>VINTAGE</b><small>faded · analog</small></button>
+<button class="film-chip" data-preset="tokyowarm"><b>TOKYO WARM</b><small>amber · cream</small></button>
+<button class="film-chip" data-preset="tokyoshadow"><b>TOKYO SHADOW</b><small>cyan · deep</small></button>
+</div>
+</main>
 <div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
-<div class="sheet-content" id="sheetContent"><h2>Filmsimulaties</h2><div class="presets">
-<button class="preset active" data-preset="tokyowarm"><b>Tokyo Warm</b><small>Crème licht · amber · zachte schaduwen</small></button>
-<button class="preset" data-preset="tokyoshadow"><b>Tokyo Shadow</b><small>Cyaan lucht · diepe groenschaduwen · contrast</small></button>
-<button class="preset active" data-preset="chrome"><b>Classic Chrome</b><small>Koele schaduwen · ingetogen rood</small></button>
-<button class="preset" data-preset="classicneg"><b>Classic Negative</b><small>Kleurverschuiving · diepe tonen</small></button>
-<button class="preset" data-preset="astia"><b>Astia Soft</b><small>Rijke kleur · zachte huidtinten</small></button>
-<button class="preset" data-preset="velvia"><b>Velvia</b><small>Intens blauw · levendig groen</small></button>
-<button class="preset" data-preset="nostalgic"><b>Nostalgic Negative</b><small>Amber highlights · diepe schaduw</small></button>
-<button class="preset" data-preset="gold"><b>Kodak Gold 200</b><small>Goudgeel · warme huid · olijfgroen</small></button>
-<button class="preset" data-preset="400h"><b>Fuji 400H Inspired</b><small>Pastel groen · cyan schaduw · zachte huid</small></button>
-<button class="preset" data-preset="provia"><b>Provia / Standard</b><small>Natuurlijke kleurweergave</small></button>
-</div>
-<h2>Lens & beeldbewerking</h2><div class="adjust">
+<div class="sheet-content" id="sheetContent"><h2>Lens & beeldbewerking</h2><div class="adjust">
 <label for="aperture">Aperture <b id="apertureValue">f/16</b></label><input id="aperture" type="range" min="1.4" max="16" step=".1" value="16"><p class="hint">Gesimuleerde achtergrondonscherpte. Dit is geen optisch diafragma.</p>
-<label for="grain">Film grain <b id="grainValue">12</b></label><input id="grain" type="range" min="0" max="100" value="12">
+<label for="grain">Film grain <b id="grainValue">12</b></label><input id="grain" type="range" min="0" max="100" value="30">
 <label for="definition">Definition / glow <b id="definitionValue">0</b></label><input id="definition" type="range" min="-100" max="100" value="0"><p class="hint">Negatief = zachte gloed · positief = lokale scherpte en microcontrast.</p>
 <div class="sheet-actions"><button class="action" id="reset">Reset instellingen</button><button class="action primary" id="closeSheet">Gereed</button></div>
 </div><p class="note">LUT-stijl kleurtransformaties, geïnspireerd op filmkarakteristieken. Geen officiële Fujifilm-profielen of Kodak-scans.</p></div></section>
@@ -51,63 +50,58 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 'use strict';
 const video=document.getElementById('video'),render=document.getElementById('render'),gl=render.getContext('webgl2',{alpha:false,antialias:false,preserveDrawingBuffer:true}),placeholder=document.getElementById('placeholder'),shoot=document.getElementById('shoot'),save=document.getElementById('save'),sheet=document.getElementById('sheet'),sheetHead=document.getElementById('sheetHead');
 const aperture=document.getElementById('aperture'),grain=document.getElementById('grain'),definition=document.getElementById('definition');
-let stream=null,facing='environment',preset='chrome',lastPhoto=null,raf=0,glReady=false,program=null,videoTexture=null,lutTexture=null,locations={},lastW=0,lastH=0;
+let stream=null,facing='environment',preset='gold',lastPhoto=null,raf=0,glReady=false,program=null,videoTexture=null,lutTexture=null,locations={},lastW=0,lastH=0;
 const profiles={
-tokyowarm:{name:'TOKYO WARM',sat:.88,contrast:1.13,black:.018,high:.98,shadow:[.008,.003,-.006],highlight:[.055,.026,-.018],redHue:-.012,greenHue:-.018,blueHue:-.025,redSat:.88,greenSat:.82,blueSat:.78,warmth:.055,coolShadows:.008,fade:.012,greenShadow:.006},
-tokyoshadow:{name:'TOKYO SHADOW',sat:.91,contrast:1.27,black:.008,high:.955,shadow:[-.018,.008,.025],highlight:[.025,.018,-.008],redHue:-.018,greenHue:.012,blueHue:-.018,redSat:.9,greenSat:.84,blueSat:.86,warmth:.018,coolShadows:.032,fade:0,greenShadow:.028},
-chrome:{name:'CLASSIC CHROME',sat:.78,contrast:1.12,black:.012,high:.96,shadow:[-.012,.006,.025],highlight:[.025,.012,-.012],redHue:-.025,greenHue:-.025,blueHue:.018,redSat:.86,greenSat:.83,blueSat:.78},
-classicneg:{name:'CLASSIC NEGATIVE',sat:1.02,contrast:1.2,black:.018,high:.95,shadow:[-.015,.025,.04],highlight:[.045,.012,-.025],redHue:-.055,greenHue:.045,blueHue:-.035,redSat:.92,greenSat:.94,blueSat:.9},
-astia:{name:'ASTIA SOFT',sat:1.08,contrast:1.01,black:.018,high:.985,shadow:[.008,.006,.018],highlight:[.018,.008,.002],redHue:.005,greenHue:-.012,blueHue:.008,redSat:1.03,greenSat:.98,blueSat:1.04},
-velvia:{name:'VELVIA',sat:1.34,contrast:1.18,black:.008,high:.94,shadow:[-.012,.002,.025],highlight:[.01,.006,-.012],redHue:-.012,greenHue:-.018,blueHue:.012,redSat:1.16,greenSat:1.3,blueSat:1.28},
-nostalgic:{name:'NOSTALGIC NEGATIVE',sat:.98,contrast:1.13,black:.022,high:.97,shadow:[-.012,.012,.025],highlight:[.055,.024,-.025],redHue:-.025,greenHue:.025,blueHue:-.025,redSat:1.04,greenSat:.9,blueSat:.83},
-gold:{name:'KODAK GOLD 200',sat:1.12,contrast:1.14,black:.014,high:.97,shadow:[.012,.006,-.008],highlight:[.075,.032,-.035],redHue:-.035,greenHue:.035,blueHue:-.055,redSat:1.1,greenSat:.91,blueSat:.84},
-'400h':{name:'FUJI 400H INSPIRED',sat:1.04,contrast:1.02,black:.026,high:.99,shadow:[-.012,.018,.035],highlight:[.035,.012,.018],redHue:.025,greenHue:-.055,blueHue:.012,redSat:.94,greenSat:.88,blueSat:.93},
-provia:{name:'PROVIA / STANDARD',sat:1,contrast:1.04,black:.006,high:.985,shadow:[0,0,0],highlight:[0,0,0],redHue:0,greenHue:0,blueHue:0,redSat:1,greenSat:1,blueSat:1}
+gold:{name:'KODAK GOLD 200',sat:1.08,contrast:1.10,toe:.018,shoulder:.035,warm:.045,cyan:0,green:.012,redHue:-.012,greenHue:.018,blueHue:-.018},
+fuji:{name:'FUJIFILM',sat:.96,contrast:1.045,toe:.012,shoulder:.055,warm:.012,cyan:.006,green:.008,redHue:.006,greenHue:-.012,blueHue:.008},
+vintage:{name:'VINTAGE',sat:.78,contrast:.96,toe:.045,shoulder:.075,warm:.032,cyan:.012,green:.012,redHue:-.012,greenHue:.012,blueHue:-.012},
+tokyowarm:{name:'TOKYO WARM',sat:.86,contrast:1.12,toe:.018,shoulder:.035,warm:.052,cyan:.006,green:.012,redHue:-.012,greenHue:-.018,blueHue:-.02},
+tokyoshadow:{name:'TOKYO SHADOW',sat:.88,contrast:1.24,toe:.008,shoulder:.025,warm:.012,cyan:.042,green:.026,redHue:-.015,greenHue:.014,blueHue:-.012}
 };
 const vs='#version 300 es\nin vec2 p;out vec2 uv;void main(){uv=(p+1.0)*0.5;gl_Position=vec4(p,0.0,1.0);}';
-const fs='#version 300 es\nprecision highp float;in vec2 uv;out vec4 outColor;uniform highp sampler2D image;uniform highp sampler3D lut;uniform vec2 texel;uniform vec2 scaleUV;uniform float grain;uniform float definition;uniform float aperture;uniform float time;\nfloat noise(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7))+time*17.0)*43758.5453);}\nvoid main(){vec2 q=(vec2(uv.x,1.0-uv.y)-0.5)*scaleUV+0.5;vec3 c=texture(image,q).rgb;float edge=smoothstep(.12,.72,distance(q,vec2(.5,.48)));float blurAmt=(16.0-aperture)/14.6*.010*edge;vec3 soft=(texture(image,q+vec2(blurAmt,0)).rgb+texture(image,q-vec2(blurAmt,0)).rgb+texture(image,q+vec2(0,blurAmt)).rgb+texture(image,q-vec2(0,blurAmt)).rgb)*.25;c=mix(c,soft,clamp(blurAmt*90.0,0.0,.78));vec3 graded=texture(lut,clamp(c,0.0,1.0)).rgb;float d=definition/100.0;vec3 avg=(texture(image,q+vec2(texel.x,0)).rgb+texture(image,q-vec2(texel.x,0)).rgb+texture(image,q+vec2(0,texel.y)).rgb+texture(image,q-vec2(0,texel.y)).rgb)*.25;graded+= (c-avg)*d*.85;float n=(noise(gl_FragCoord.xy)-.5)*grain*.16/255.0;graded+=vec3(n);outColor=vec4(clamp(graded,0.0,1.0),1.0);}';
+const fs='#version 300 es\\nprecision highp float;in vec2 uv;out vec4 outColor;uniform highp sampler2D image;uniform highp sampler2D lutAtlas;uniform vec2 texel;uniform vec2 scaleUV;uniform float grain;uniform float definition;uniform float aperture;uniform float time;\\nconst float LUT_N=33.0;const float LUT_W=1089.0;\\nvec3 lutSample(vec3 c){vec3 p=clamp(c,0.0,1.0)*(LUT_N-1.0);float b0=floor(p.b),b1=min(b0+1.0,LUT_N-1.0);float fy=fract(p.b);vec2 uv0=vec2((b0*LUT_N+p.r+0.5)/LUT_W,(p.g+0.5)/LUT_N);vec2 uv1=vec2((b1*LUT_N+p.r+0.5)/LUT_W,(p.g+0.5)/LUT_N);return mix(texture(lutAtlas,uv0).rgb,texture(lutAtlas,uv1).rgb,fy);}\\nfloat hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7))+time*17.0)*43758.5453);}\\nvoid main(){vec2 q=(vec2(uv.x,1.0-uv.y)-0.5)*scaleUV+0.5;vec3 c=texture(image,q).rgb;float edge=smoothstep(.12,.72,distance(q,vec2(.5,.48)));float blurAmt=(16.0-aperture)/14.6*.010*edge;vec3 soft=(texture(image,q+vec2(blurAmt,0)).rgb+texture(image,q-vec2(blurAmt,0)).rgb+texture(image,q+vec2(0,blurAmt)).rgb+texture(image,q-vec2(0,blurAmt)).rgb)*.25;c=mix(c,soft,clamp(blurAmt*90.0,0.0,.78));vec3 graded=lutSample(c);float d=definition/100.0;vec3 avg=(texture(image,q+vec2(texel.x,0)).rgb+texture(image,q-vec2(texel.x,0)).rgb+texture(image,q+vec2(0,texel.y)).rgb+texture(image,q-vec2(0,texel.y)).rgb)*.25;graded+=(c-avg)*d*.85;float fine=hash(gl_FragCoord.xy)-.5;float coarse=hash(floor(gl_FragCoord.xy*.45))-.5;float n=(fine*.72+coarse*.28)*grain*.00115;float lum=dot(graded,vec3(.2126,.7152,.0722));n*=mix(.72,1.18,1.0-lum);graded+=vec3(n);outColor=vec4(clamp(graded,0.0,1.0),1.0);}';
 function shader(type,src){const sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
 function rgbToHsl(r,g,b){let max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2;if(max!==min){let d=max-min;s=d/(1-Math.abs(2*l-1));if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,s,l]}
 function hslToRgb(h,s,l){h=((h%360)+360)%360;let c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return[r+m,g+m,b+m]}
 function makeLut(profile){
-const n=33,data=new Uint8Array(n*n*n*4);let k=0;
-for(let z=0;z<n;z++)for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-let r=x/(n-1),g=y/(n-1),b=z/(n-1),[h,s,l]=rgbToHsl(r,g,b),p=profile;
-const red=Math.max(0,1-Math.min(h,360-h)/48),green=Math.max(0,1-Math.abs(h-120)/58),blue=Math.max(0,1-Math.abs(h-235)/55);
-h+=red*(p.redHue||0)*360+green*(p.greenHue||0)*360+blue*(p.blueHue||0)*360;
-s=Math.max(0,Math.min(1,s*(p.sat||1)*(1+red*((p.redSat||1)-1)+green*((p.greenSat||1)-1)+blue*((p.blueSat||1)-1))));
-const lum=.2126*r+.7152*g+.0722*b,shadow=Math.pow(1-lum,2),highlight=Math.pow(lum,2);
-let tone=(lum-.5)*(p.contrast||1)+.5;tone+=-(p.black||0)*shadow+(1-lum)*(p.fade||0);tone=Math.max(0,Math.min(1,tone));
-const split=p.shadow||[0,0,0],hi=p.highlight||[0,0,0];
-let rr=tone+(split[0]||0)*shadow+(hi[0]||0)*highlight+(p.warmth||0)*highlight-(p.coolShadows||0)*shadow;
-let gg=tone+(split[1]||0)*shadow+(hi[1]||0)*highlight+(p.warmth||0)*highlight*.38+(p.greenShadow||0)*shadow;
-let bb=tone+(split[2]||0)*shadow+(hi[2]||0)*highlight-(p.warmth||0)*highlight*.58+(p.coolShadows||0)*shadow;
-const targetLum=.2126*rr+.7152*gg+.0722*bb;
-const adjusted=hslToRgb(h,s,Math.max(0,Math.min(1,targetLum)));
-data[k++]=Math.round(Math.max(0,Math.min(1,adjusted[0]))*255);data[k++]=Math.round(Math.max(0,Math.min(1,adjusted[1]))*255);data[k++]=Math.round(Math.max(0,Math.min(1,adjusted[2]))*255);data[k++]=255;
+const n=33,width=n*n,data=new Uint8Array(width*n*4);let k=0;
+for(let g=0;g<n;g++)for(let b=0;b<n;b++)for(let r=0;r<n;r++){
+const R=r/(n-1),G=g/(n-1),B=b/(n-1),mx=Math.max(R,G,B),mn=Math.min(R,G,B),l=(mx+mn)*.5,d=mx-mn;
+let h=0,sat=0;if(d>1e-6){sat=d/(1-Math.abs(2*l-1));if(mx===R)h=((G-B)/d)%6;else if(mx===G)h=(B-R)/d+2;else h=(R-G)/d+4;h=(h*60+360)%360;}
+const red=Math.max(0,1-Math.min(h,360-h)/50),green=Math.max(0,1-Math.abs(h-120)/62),blue=Math.max(0,1-Math.abs(h-235)/58);
+h=(h+red*profile.redHue*360+green*profile.greenHue*360+blue*profile.blueHue*360+360)%360;
+sat=Math.max(0,Math.min(1,sat*profile.sat*(1+red*.06-green*.05)));
+const y=.2126*R+.7152*G+.0722*B;
+let tone=(y-.5)*profile.contrast+.5+profile.toe*Math.pow(1-y,2)-profile.shoulder*Math.pow(y,2);tone=Math.max(0,Math.min(1,tone));
+const shadow=Math.pow(1-y,2),high=Math.pow(y,2);
+const rr=tone-profile.cyan*shadow+profile.warm*high,gg=tone+profile.green*shadow+profile.warm*.34*high,bb=tone+profile.cyan*shadow-profile.warm*.58*high;
+const outY=Math.max(0,Math.min(1,.2126*rr+.7152*gg+.0722*bb));
+const hh=h/60,cc=(1-Math.abs(2*outY-1))*sat,xx=cc*(1-Math.abs(hh%2-1)),m=outY-cc/2;
+let a=0,bv=0,c=0;if(hh<1){a=cc;bv=xx}else if(hh<2){a=xx;bv=cc}else if(hh<3){bv=cc;c=xx}else if(hh<4){bv=xx;c=cc}else if(hh<5){a=xx;c=cc}else{a=cc;c=xx}
+data[k++]=Math.round(Math.max(0,Math.min(1,a+m))*255);data[k++]=Math.round(Math.max(0,Math.min(1,bv+m))*255);data[k++]=Math.round(Math.max(0,Math.min(1,c+m))*255);data[k++]=255;
 }
-return {n,data};
+return {n,width,data};
 }
-function uploadLut(name){const lut=makeLut(profiles[name]);gl.bindTexture(gl.TEXTURE_3D,lutTexture);gl.texImage3D(gl.TEXTURE_3D,0,gl.RGBA8,lut.n,lut.n,lut.n,0,gl.RGBA,gl.UNSIGNED_BYTE,lut.data);gl.uniform1i(locations.lut,1);document.getElementById('filmLabel').textContent=profiles[name].name}
-function initGL(){if(!gl)throw Error('WebGL2 wordt niet ondersteund in deze browser.');program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);let p=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(p);gl.vertexAttribPointer(p,2,gl.FLOAT,false,0,0);videoTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,videoTexture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.uniform1i(gl.getUniformLocation(program,'image'),0);lutTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_3D,lutTexture);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_3D,gl.TEXTURE_WRAP_R,gl.CLAMP_TO_EDGE);locations={lut:gl.getUniformLocation(program,'lut'),texel:gl.getUniformLocation(program,'texel'),scaleUV:gl.getUniformLocation(program,'scaleUV'),grain:gl.getUniformLocation(program,'grain'),definition:gl.getUniformLocation(program,'definition'),aperture:gl.getUniformLocation(program,'aperture'),time:gl.getUniformLocation(program,'time')};glReady=true;uploadLut(preset)}
+function uploadLut(name){const lut=makeLut(profiles[name]);gl.bindTexture(gl.TEXTURE_2D,lutTexture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,lut.width,lut.n,0,gl.RGBA,gl.UNSIGNED_BYTE,lut.data);gl.uniform1i(locations.lut,1);document.getElementById('filmLabel').textContent=profiles[name].name}
+function initGL(){if(!gl)throw Error('WebGL2 wordt niet ondersteund in deze browser.');program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);let p=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(p);gl.vertexAttribPointer(p,2,gl.FLOAT,false,0,0);videoTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,videoTexture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.uniform1i(gl.getUniformLocation(program,'image'),0);lutTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,lutTexture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);locations={lut:gl.getUniformLocation(program,'lutAtlas'),texel:gl.getUniformLocation(program,'texel'),scaleUV:gl.getUniformLocation(program,'scaleUV'),grain:gl.getUniformLocation(program,'grain'),definition:gl.getUniformLocation(program,'definition'),aperture:gl.getUniformLocation(program,'aperture'),time:gl.getUniformLocation(program,'time')};glReady=true;uploadLut(preset)}
 function renderFrame(targetW,targetH){if(!glReady||!stream||video.readyState<2)return;let w=targetW||render.clientWidth*devicePixelRatio,h=targetH||render.clientHeight*devicePixelRatio;w=Math.max(2,Math.floor(w));h=Math.max(2,Math.floor(h));if(render.width!==w||render.height!==h){render.width=w;render.height=h;gl.viewport(0,0,w,h)}gl.useProgram(program);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,videoTexture);try{gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video)}catch(e){return}gl.uniform2f(locations.texel,1/video.videoWidth,1/video.videoHeight);let sourceAspect=video.videoWidth/video.videoHeight,targetAspect=w/h;gl.uniform2f(locations.scaleUV,Math.min(1,targetAspect/sourceAspect),Math.min(1,sourceAspect/targetAspect));gl.uniform1f(locations.grain,Number(grain.value));gl.uniform1f(locations.definition,Number(definition.value));gl.uniform1f(locations.aperture,Number(aperture.value));gl.uniform1f(locations.time,performance.now()/1000);gl.drawArrays(gl.TRIANGLE_STRIP,0,4)}
 function loop(){renderFrame();raf=requestAnimationFrame(loop)}
 async function startCamera(){try{if(!glReady)initGL();if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:facing,width:{ideal:3840},height:{ideal:2160},frameRate:{ideal:30,max:30}}});video.srcObject=stream;await video.play();placeholder.style.display='none';shoot.disabled=false;cancelAnimationFrame(raf);loop()}catch(e){placeholder.style.display='flex';placeholder.querySelector('p').textContent='Camera of beeldverwerking niet beschikbaar. Open in Safari en sta cameratoegang toe. '+(e.message||'');shoot.disabled=true}}
 document.getElementById('start').addEventListener('click',startCamera);
 document.getElementById('flip').addEventListener('click',()=>{facing=facing==='environment'?'user':'environment';startCamera()});
-function choose(name){preset=name;if(glReady)uploadLut(name);else document.getElementById('filmLabel').textContent=profiles[name].name;document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));}
-document.querySelectorAll('.preset').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.preset)));
+function choose(name){if(!profiles[name])return;preset=name;if(glReady)uploadLut(name);else document.getElementById('filmLabel').textContent=profiles[name].name;document.querySelectorAll('.film-chip').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));}
+document.querySelectorAll('.film-chip').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.preset)));
 function updateLabels(){document.getElementById('apertureValue').textContent='f/'+Number(aperture.value).toFixed(1);document.getElementById('grainValue').textContent=grain.value;document.getElementById('definitionValue').textContent=definition.value}
 [aperture,grain,definition].forEach(el=>el.addEventListener('input',updateLabels));updateLabels();
 function capture(){if(!stream||!glReady)return;const w=video.videoWidth,h=video.videoHeight;if(!w||!h)return;renderFrame(w,h);lastPhoto=render.toDataURL('image/jpeg',.96);save.disabled=false;save.dataset.ready='1';}
 shoot.addEventListener('click',capture);
 save.addEventListener('click',async()=>{if(!lastPhoto)return;const blob=await(await fetch(lastPhoto)).blob(),file=new File([blob],'fuji-pocket-'+Date.now()+'.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:'Fuji Pocket foto'});return}catch(e){if(e.name==='AbortError')return}}const a=document.createElement('a');a.href=lastPhoto;a.download=file.name;a.click()});
-document.getElementById('reset').addEventListener('click',()=>{aperture.value=16;grain.value=12;definition.value=0;updateLabels();choose('chrome')});
+document.getElementById('reset').addEventListener('click',()=>{aperture.value=16;grain.value=30;definition.value=0;updateLabels();choose('gold')});
 function setSheet(open){sheet.classList.toggle('expanded',open);document.getElementById('chevron').textContent=open?'⌄':'⌃';document.getElementById('sheetSub').textContent=open?'Veeg omlaag of tik op gereed om te sluiten':'Tik of veeg omhoog voor films & instellingen'}
 sheetHead.addEventListener('click',()=>setSheet(!sheet.classList.contains('expanded')));
 document.getElementById('closeSheet').addEventListener('click',()=>setSheet(false));
 let touchY=0;sheetHead.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});sheetHead.addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(dy<-25)setSheet(true);if(dy>25)setSheet(false)},{passive:true});
 document.getElementById('sheetContent').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});document.getElementById('sheetContent').addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(e.target.scrollTop===0&&dy>80)setSheet(false)},{passive:true});
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('chrome');
+window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('gold');
 </script></body></html>
