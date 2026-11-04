@@ -7,7 +7,7 @@
 header{height:48px;flex:0 0 48px;display:flex;align-items:center;justify-content:space-between;padding:0 4px}.brand{font-size:17px;font-weight:800;letter-spacing:.06em}.brand span{color:var(--accent)}.status{font-size:10px;color:var(--muted);letter-spacing:.12em}
 .stage{position:relative;flex:1;min-height:80px;overflow:hidden;border-radius:19px;background:#080808;box-shadow:0 12px 35px #0008}
 #video,#render{position:absolute;width:100%;height:100%;inset:0;object-fit:cover}#video{opacity:0}#render{display:block}
-.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px;background:#10100e}.placeholder p{color:var(--muted);font-size:13px;line-height:1.5;max-width:260px}
+.photo-review{position:absolute;inset:0;z-index:4;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:18px;background:#080807f5}.photo-review img{display:block;max-width:100%;max-height:calc(100% - 58px);object-fit:contain;-webkit-touch-callout:default;touch-action:pan-y;user-select:none}.photo-review p{margin:0;color:#eee9dc;font-size:12px;text-align:center}.photo-close{position:absolute;right:12px;top:12px;z-index:2;width:38px;height:38px;border-radius:50%;border:1px solid #777;background:#222;color:#fff;font-size:25px}.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px;background:#10100e}.placeholder p{color:var(--muted);font-size:13px;line-height:1.5;max-width:260px}
 .film-strip{position:relative;z-index:2;flex:0 0 72px;height:72px;display:flex;align-items:center;gap:8px;padding:8px 0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;background:transparent}
 .film-strip::-webkit-scrollbar{display:none}.film-chip{flex:0 0 116px;scroll-snap-align:center;min-height:54px;border:1px solid #ffffff55;border-radius:12px;background:#141410d9;color:var(--cream);text-align:left;padding:9px 10px;backdrop-filter:blur(12px)}
 .film-chip b{display:block;font-size:10px;letter-spacing:.08em;white-space:nowrap}.film-chip small{display:block;color:#c8c4b8;font-size:9px;margin-top:5px}.film-chip.active{border-color:var(--accent);background:#403321ed;box-shadow:inset 0 0 0 1px var(--accent)}
@@ -29,8 +29,8 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 @media(min-width:600px){.app{padding-top:8px}.stage{max-height:760px}}
 </style></head><body><div class="app">
 <header><div class="brand">FUJI <span>POCKET</span></div><div class="status">DIGITAL FILM CAMERA</div></header>
-<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><span class="tag">FP · 20</span><span class="tag film-tag" id="filmLabel">CLASSIC CHROME</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
-</main>
+<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><span class="tag">FP · 21</span><span class="tag film-tag" id="filmLabel">CLASSIC CHROME</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
+<div class="photo-review" id="photoReview"><button class="photo-close" id="closeReview" aria-label="Sluit foto">×</button><img id="photoPreview" alt="Laatst gemaakte foto"><p>Houd de foto ingedrukt en kies <b>Bewaar in Foto's</b></p></div></main>
 <div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
 <button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm</small></button>
 <button class="film-chip" data-preset="fuji"><b>FUJIFILM</b><small>soft · natural</small></button>
@@ -39,7 +39,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <button class="film-chip" data-preset="tokyoshadow"><b>TOKYO SHADOW</b><small>teal · cream</small></button>
 </div>
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
-<div class="sheet-content" id="sheetContent"><h2>Beeldbewerking</h2><div class="adjust">\n<label for="grain">Film grain <b id="grainValue">30</b></label><input id="grain" type="range" min="0" max="100" value="30">
+<div class="sheet-content" id="sheetContent"><h2>Beeldbewerking</h2><div class="adjust"><label for="grain">Film grain <b id="grainValue">30</b></label><input id="grain" type="range" min="0" max="100" value="30">
 <label for="definition">Clarity / textuur <b id="definitionValue">0</b></label><input id="definition" type="range" min="-100" max="100" value="0"><p class="hint">Positief = meer lokaal contrast en duidelijke contouren. Negatief = zachtere overgangen, zonder de foto onscherp te maken.</p>
 <div class="sheet-actions"><button class="action" id="reset">Reset instellingen</button><button class="action primary" id="closeSheet">Gereed</button></div>
 </div><p class="note">Eigen 3D-kleurtransformaties in perceptuele OKLab-kleurruimte, geïnspireerd op filmkarakteristieken. Geen officiële Fujifilm-profielen of Kodak-scans.</p></div></section>
@@ -49,7 +49,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <script>
 'use strict';
 const video=document.getElementById('video'),render=document.getElementById('render'),gl=render.getContext('webgl2',{alpha:false,antialias:false,preserveDrawingBuffer:true}),placeholder=document.getElementById('placeholder'),shoot=document.getElementById('shoot'),save=document.getElementById('save'),sheet=document.getElementById('sheet'),sheetHead=document.getElementById('sheetHead');
-const grain=document.getElementById('grain'),definition=document.getElementById('definition');
+const grain=document.getElementById('grain'),definition=document.getElementById('definition'),photoReview=document.getElementById('photoReview'),photoPreview=document.getElementById('photoPreview');
 let stream=null,facing='environment',preset='gold',lastPhoto=null,raf=0,glReady=false,program=null,videoTexture=null,lutTexture=null,locations={},lastW=0,lastH=0;
 const profiles={
 gold:{name:'KODAK GOLD 200',sat:1.055,vibrance:.16,contrast:1.045,toe:.016,shoulder:.19,blackLift:.004,whiteBalance:[1.035,1.012,.965],channelGamma:[.985,1,1.025],dye:[1,.018,.008,.012,1,.018,.006,.025,1],highlightDesat:.19,shadowSat:.96,skinProtect:.34,shadowHue:32,shadowTint:.008,highlightHue:42,highlightTint:.014,midHue:34,midTint:.004,hueShift:[1,0,-5,-8,-3,-7,-1],hueSat:[1.10,1.12,1.03,.84,.80,.86,.92]},
@@ -106,8 +106,8 @@ function choose(name){if(!profiles[name])return;preset=name;if(glReady)uploadLut
 document.querySelectorAll('.film-chip').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.preset)));
 function updateLabels(){document.getElementById('grainValue').textContent=grain.value;document.getElementById('definitionValue').textContent=definition.value}
 [grain,definition].forEach(el=>el.addEventListener('input',updateLabels));updateLabels();
-function capture(){if(!stream||!glReady)return;const w=video.videoWidth,h=video.videoHeight;if(!w||!h)return;renderFrame(w,h);lastPhoto=render.toDataURL('image/jpeg',.96);save.disabled=false;save.dataset.ready='1';}
-shoot.addEventListener('click',capture);
+function capture(){if(!stream||!glReady)return;const w=video.videoWidth,h=video.videoHeight;if(!w||!h)return;photoReview.style.display='none';renderFrame(w,h);lastPhoto=render.toDataURL('image/jpeg',.96);photoPreview.src=lastPhoto;photoReview.style.display='flex';save.disabled=false;save.dataset.ready='1';}
+shoot.addEventListener('click',capture);document.getElementById('closeReview').addEventListener('click',()=>{photoReview.style.display='none'});
 save.addEventListener('click',async()=>{if(!lastPhoto)return;const blob=await(await fetch(lastPhoto)).blob(),file=new File([blob],'fuji-pocket-'+Date.now()+'.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:'Fuji Pocket foto'});return}catch(e){if(e.name==='AbortError')return}}const a=document.createElement('a');a.href=lastPhoto;a.download=file.name;a.click()});
 document.getElementById('reset').addEventListener('click',()=>{grain.value=30;definition.value=0;updateLabels();choose('gold')});
 function setSheet(open){sheet.classList.toggle('expanded',open);document.getElementById('chevron').textContent=open?'⌄':'⌃';document.getElementById('sheetSub').textContent=open?'Veeg omlaag of tik op gereed om te sluiten':'Tik of veeg omhoog voor films & instellingen'}
@@ -115,6 +115,6 @@ sheetHead.addEventListener('click',()=>setSheet(!sheet.classList.contains('expan
 document.getElementById('closeSheet').addEventListener('click',()=>setSheet(false));
 let touchY=0;sheetHead.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});sheetHead.addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(dy<-25)setSheet(true);if(dy>25)setSheet(false)},{passive:true});
 document.getElementById('sheetContent').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});document.getElementById('sheetContent').addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(e.target.scrollTop===0&&dy>80)setSheet(false)},{passive:true});
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=20',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=21',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
 window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('gold');
 </script></body></html>
