@@ -112,7 +112,7 @@ const builtinProfileSpecs={
  gold:{file:'./profiles/gold_200.rgba.b64',title:'KODAK GOLD 200',kind:'rgba'},
  portra:{file:'./profiles/portra_400.rgba.b64',title:'KODAK PORTRA 400',kind:'rgba'},
  ektar:{file:'./profiles/ektar_100.rgba.b64',title:'KODAK EKTAR 100',kind:'rgba'},
- classicchrome:{file:'./profiles/fujifilm_classic_chrome.xmp',title:'FUJIFILM CLASSIC CHROME',kind:'xmp'},
+ classicchrome:{file:'./profiles/classic_chrome.rgba.b64',title:'FUJIFILM CLASSIC CHROME',kind:'rgba'},
  pro400h:{file:'./profiles/pro_400h.rgba.b64',title:'FUJIFILM PRO 400H',kind:'rgba'}
 };
 const builtinLutCache={},builtinLutPromises={};
@@ -169,6 +169,6 @@ document.getElementById('closeSheet').addEventListener('click',()=>setSheet(fals
 let touchY=0;sheetHead.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});sheetHead.addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(dy<-25)setSheet(true);if(dy>25)setSheet(false)},{passive:true});
 document.getElementById('sheetContent').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});document.getElementById('sheetContent').addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(e.target.scrollTop===0&&dy>80)setSheet(false)},{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream){cancelAnimationFrame(raf);raf=0;stream.getTracks().forEach(t=>t.stop());stream=null;video.pause();video.srcObject=null;shoot.disabled=true;document.getElementById('cameraStatus').textContent='CAMERA GEPAUZEERD';placeholder.style.display='flex';placeholder.querySelector('p').textContent='Tik op Camera starten om de camera opnieuw te activeren.'}});window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);raf=0;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}});render.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(raf);raf=0;glReady=false;fallbackActive=true;render.style.display='none';fallbackRender.style.display='block';document.getElementById('cameraStatus').textContent='BASISMODUS · GPU HERSTELD';if(stream)loop()});
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=40',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=41',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
 window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('gold');
 </script></body></html>
