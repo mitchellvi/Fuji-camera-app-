@@ -30,7 +30,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 @media(min-width:600px){.app{padding-top:8px}.stage{max-height:760px}}
 </style></head><body><div class="app">
 <header><div class="brand">FUJI <span>POCKET</span></div><div class="status" id="cameraStatus" aria-live="polite">CAMERA GEREED</div></header>
-<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><canvas id="fallbackRender" aria-hidden="true"></canvas><span class="tag">FP · 44</span><span class="tag film-tag" id="filmLabel">KODAK GOLD 200</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
+<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><canvas id="fallbackRender" aria-hidden="true"></canvas><span class="tag">FP · 45</span><span class="tag film-tag" id="filmLabel">KODAK GOLD 200</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
 <div class="photo-review" id="photoReview"><button class="photo-close" id="closeReview" aria-label="Sluit foto">×</button><img id="photoPreview" alt="Laatst gemaakte foto"><p>Houd de foto ingedrukt en kies <b>Bewaar in Foto's</b></p></div></main>
 <div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
 <button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm negative</small></button>
@@ -46,7 +46,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <div class="sheet-actions"><button class="action" id="loadLut">Importeer .cube-LUT</button><button class="action" id="loadXmp">Importeer .xmp-preset</button><button class="action" id="reset">Reset</button><button class="action primary" id="closeSheet">Gereed</button></div>
 <input id="lutFile" type="file" accept=".cube,text/plain" hidden><input id="xmpFile" type="file" accept=".xmp,application/xml,text/xml" hidden>
 <p class="hint" id="lutStatus">Importeer ook Lightroom/Camera Raw .xmp-presets. Ondersteunde kleur- en tooninstellingen worden vertaald naar een 3D-LUT; maskers, lokale effecten en lenscorrecties worden niet meegenomen.</p>
-</div><p class="note">Gold 200, Portra 400, Ektar 100 en Pro 400H gebruiken spectraal gemodelleerde negatief-naar-afdruk-LUT's op basis van gepubliceerde filmgegevens. Classic Chrome gebruikt een aparte digitale kleurpreset. De iPhone-preview is geen RAW-scan en kan de oorspronkelijke scènekleuren niet volledig reconstrueren.</p></div></section>
+</div><p class="note">De vijf kleurprofielen zijn benaderingen op basis van gepubliceerde Fujifilm X100VI/X-Trans V-receptinstellingen (filmsimulatie, witbalansverschuiving, DR, tooncurve en Color Chrome). Het zijn geen officiële Kodak/Fujifilm-LUT's of exacte spectrale filmreconstructies. Filmkorrel en textuur stel je afzonderlijk in. De iPhone-preview is geen RAW-scan.</p></div></section>
 <div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
 
 </div>
