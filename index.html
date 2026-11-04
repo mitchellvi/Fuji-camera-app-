@@ -35,8 +35,8 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm</small></button>
 <button class="film-chip" data-preset="fuji"><b>FUJIFILM</b><small>soft · natural</small></button>
 <button class="film-chip" data-preset="vintage"><b>VINTAGE</b><small>faded · analog</small></button>
-<button class="film-chip" data-preset="tokyowarm"><b>TOKYO WARM</b><small>amber · cream</small></button>
-<button class="film-chip" data-preset="tokyoshadow"><b>TOKYO SHADOW</b><small>cyan · deep</small></button>
+<button class="film-chip" data-preset="tokyowarm"><b>TOKYO WARM</b><small>olive · amber</small></button>
+<button class="film-chip" data-preset="tokyoshadow"><b>TOKYO SHADOW</b><small>teal · cream</small></button>
 </div>
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
 <div class="sheet-content" id="sheetContent"><h2>Lens & beeldbewerking</h2><div class="adjust">
@@ -44,7 +44,7 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 <label for="grain">Film grain <b id="grainValue">30</b></label><input id="grain" type="range" min="0" max="100" value="30">
 <label for="definition">Definition / glow <b id="definitionValue">0</b></label><input id="definition" type="range" min="-100" max="100" value="0"><p class="hint">Negatief = zachte gloed · positief = lokale scherpte en microcontrast.</p>
 <div class="sheet-actions"><button class="action" id="reset">Reset instellingen</button><button class="action primary" id="closeSheet">Gereed</button></div>
-</div><p class="note">LUT-stijl kleurtransformaties, geïnspireerd op filmkarakteristieken. Geen officiële Fujifilm-profielen of Kodak-scans.</p></div></section>
+</div><p class="note">Eigen 3D-kleurtransformaties in perceptuele OKLab-kleurruimte, geïnspireerd op filmkarakteristieken. Geen officiële Fujifilm-profielen of Kodak-scans.</p></div></section>
 <div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
 
 </div>
@@ -54,35 +54,55 @@ const video=document.getElementById('video'),render=document.getElementById('ren
 const aperture=document.getElementById('aperture'),grain=document.getElementById('grain'),definition=document.getElementById('definition');
 let stream=null,facing='environment',preset='gold',lastPhoto=null,raf=0,glReady=false,program=null,videoTexture=null,lutTexture=null,locations={},lastW=0,lastH=0;
 const profiles={
-gold:{name:'KODAK GOLD 200',sat:1.22,contrast:1.13,fade:.012,warm:.105,cool:.025,green:.018,redHue:-9,greenHue:8,blueHue:-12,redSat:1.08,greenSat:1.12,blueSat:.78,highlight:.035,shadow:.018},
-fuji:{name:'FUJIFILM',sat:1.10,contrast:1.10,fade:.006,warm:.012,cool:.045,green:.045,redHue:5,greenHue:-13,blueHue:-12,redSat:.92,greenSat:1.18,blueSat:1.15,highlight:.018,shadow:.028},
-vintage:{name:'VINTAGE',sat:.76,contrast:.96,fade:.075,warm:.075,cool:.018,green:.012,redHue:-7,greenHue:5,blueHue:-8,redSat:.92,greenSat:.82,blueSat:.72,highlight:.025,shadow:.035},
-tokyowarm:{name:'TOKYO WARM',sat:1.02,contrast:1.14,fade:.018,warm:.125,cool:.012,green:.025,redHue:-12,greenHue:-8,blueHue:-15,redSat:.88,greenSat:1.05,blueSat:.76,highlight:.045,shadow:.012},
-tokyoshadow:{name:'TOKYO SHADOW',sat:1.08,contrast:1.22,fade:.008,warm:.055,cool:.115,green:.065,redHue:-8,greenHue:-15,blueHue:-18,redSat:.82,greenSat:1.12,blueSat:1.22,highlight:.045,shadow:.065}
+gold:{name:'KODAK GOLD 200',sat:1.16,vibrance:.22,contrast:1.075,toe:.025,shoulder:.13,blackLift:.012,whiteBalance:[1.055,1.018,.925],shadowHue:205,shadowTint:.010,highlightHue:58,highlightTint:.026,midHue:38,midTint:.006,hueShift:[3,-4,-8,-9,-7,-10,0],hueSat:[1.04,1.12,1.02,.88,.86,.91,.94]},
+fuji:{name:'FUJIFILM · CLASSIC CHROME',sat:.91,vibrance:.12,contrast:1.12,toe:.012,shoulder:.105,blackLift:.006,whiteBalance:[1.012,1.018,1.035],shadowHue:205,shadowTint:.022,highlightHue:48,highlightTint:.008,midHue:28,midTint:.003,hueShift:[-2,-5,-8,-13,-8,-9,-5],hueSat:[.92,1.02,.92,.82,.90,1.02,.86]},
+vintage:{name:'VINTAGE · FADED PRINT',sat:.78,vibrance:.08,contrast:.96,toe:.060,shoulder:.18,blackLift:.035,whiteBalance:[1.045,1.025,.965],shadowHue:34,shadowTint:.010,highlightHue:48,highlightTint:.018,midHue:38,midTint:.006,hueShift:[-3,-7,-10,-8,-10,-12,-5],hueSat:[.90,.98,.86,.78,.78,.78,.82]},
+tokyowarm:{name:'TOKYO WARM · AMBER',sat:.96,vibrance:.15,contrast:1.105,toe:.018,shoulder:.145,blackLift:.014,whiteBalance:[1.075,1.035,.905],shadowHue:145,shadowTint:.018,highlightHue:52,highlightTint:.032,midHue:42,midTint:.010,hueShift:[-5,-9,-12,-14,-9,-13,-5],hueSat:[.88,1.04,.95,.88,.82,.82,.84]},
+tokyoshadow:{name:'TOKYO SHADOW · TEAL',sat:1.00,vibrance:.17,contrast:1.19,toe:.008,shoulder:.115,blackLift:.004,whiteBalance:[.985,1.018,1.065],shadowHue:198,shadowTint:.032,highlightHue:48,highlightTint:.020,midHue:30,midTint:.004,hueShift:[-3,-8,-11,-17,-14,-16,-8],hueSat:[.82,.98,.92,1.02,1.10,1.12,.90]}
 };
 const vs='#version 300 es\nin vec2 p;out vec2 uv;void main(){uv=(p+1.0)*0.5;gl_Position=vec4(p,0.0,1.0);}';
 const fs='#version 300 es\nprecision highp float;in vec2 uv;out vec4 outColor;uniform highp sampler2D image;uniform highp sampler2D lutAtlas;uniform vec2 texel;uniform vec2 scaleUV;uniform float grain;uniform float definition;uniform float aperture;uniform float time;\nconst float LUT_N=33.0;const float LUT_W=1089.0;\nvec3 lutSample(vec3 c){vec3 p=clamp(c,0.0,1.0)*(LUT_N-1.0);float b0=floor(p.b),b1=min(b0+1.0,LUT_N-1.0);float fy=fract(p.b);vec2 uv0=vec2((b0*LUT_N+p.r+0.5)/LUT_W,(p.g+0.5)/LUT_N);vec2 uv1=vec2((b1*LUT_N+p.r+0.5)/LUT_W,(p.g+0.5)/LUT_N);return mix(texture(lutAtlas,uv0).rgb,texture(lutAtlas,uv1).rgb,fy);}\nfloat hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7))+time*17.0)*43758.5453);}\nvoid main(){vec2 q=(vec2(uv.x,1.0-uv.y)-0.5)*scaleUV+0.5;vec3 c=texture(image,q).rgb;float edge=smoothstep(.12,.72,distance(q,vec2(.5,.48)));float blurAmt=(16.0-aperture)/14.6*.010*edge;vec3 soft=(texture(image,q+vec2(blurAmt,0)).rgb+texture(image,q-vec2(blurAmt,0)).rgb+texture(image,q+vec2(0,blurAmt)).rgb+texture(image,q-vec2(0,blurAmt)).rgb)*.25;c=mix(c,soft,clamp(blurAmt*90.0,0.0,.78));vec3 graded=lutSample(c);float d=definition/100.0;vec3 avg=(texture(image,q+vec2(texel.x,0)).rgb+texture(image,q-vec2(texel.x,0)).rgb+texture(image,q+vec2(0,texel.y)).rgb+texture(image,q-vec2(0,texel.y)).rgb)*.25;graded+=(c-avg)*d*.85;float fine=hash(gl_FragCoord.xy)-.5;float coarse=hash(floor(gl_FragCoord.xy*.45))-.5;float n=(fine*.72+coarse*.28)*grain*.00115;float lum=dot(graded,vec3(.2126,.7152,.0722));n*=mix(.72,1.18,1.0-lum);graded+=vec3(n);outColor=vec4(clamp(graded,0.0,1.0),1.0);}';
 function shader(type,src){const sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
-function rgbToHsl(r,g,b){let max=Math.max(r,g,b),min=Math.min(r,g,b),h=0,s=0,l=(max+min)/2;if(max!==min){let d=max-min;s=d/(1-Math.abs(2*l-1));if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,s,l]}
-function hslToRgb(h,s,l){h=((h%360)+360)%360;let c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return[r+m,g+m,b+m]}
+function srgbToLinear(v){return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4)}
+function linearToSrgb(v){v=Math.max(0,v);return v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055}
+function linearToOklab(r,g,b){
+const l=Math.cbrt(.4122214708*r+.5363325363*g+.0514459929*b);
+const m=Math.cbrt(.2119034982*r+.6806995451*g+.1073969566*b);
+const ss=Math.cbrt(.0883024619*r+.2817188376*g+.6299787005*b);
+return [.2104542553*l+.793617785*m-.0040720468*ss,1.9779984951*l-2.428592205*m+.4505937099*ss,.0259040371*l+.7827717662*m-.808675766*ss]
+}
+function oklabToLinear(L,a,b){
+const l=Math.pow(L+.3963377774*a+.2158037573*b,3);
+const m=Math.pow(L-.1055613458*a-.0638541728*b,3);
+const ss=Math.pow(L-.0894841775*a-1.291485548*b,3);
+return [4.0767416621*l-3.3077115913*m+.2309699292*ss,-1.2684380046*l+2.6097574011*m-.3413193965*ss,-.0041960863*l-.7034186147*m+1.707614701*ss]
+}
 function makeLut(profile){
 const n=33,width=n*n,data=new Uint8Array(width*n*4);let k=0;
 const clamp=v=>Math.max(0,Math.min(1,v));
 const smooth=(a,b,x)=>{let t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+const hueDistance=(a,b)=>Math.abs(((a-b+540)%360)-180);
+const centers=[20,52,92,145,195,250,315];
 for(let g=0;g<n;g++)for(let b=0;b<n;b++)for(let r=0;r<n;r++){
-const R=r/(n-1),G=g/(n-1),B=b/(n-1),[h,sat,y]=rgbToHsl(R,G,B);
-const red=Math.max(0,1-Math.min(h,360-h)/55),green=Math.max(0,1-Math.abs(h-120)/65),blue=Math.max(0,1-Math.abs(h-235)/65);
-let hue=(h+red*profile.redHue+green*profile.greenHue+blue*profile.blueHue+360)%360;
-let colorSat=sat*profile.sat*(1+red*(profile.redSat-1)+green*(profile.greenSat-1)+blue*(profile.blueSat-1));
-let lum=clamp((y-.5)*profile.contrast+.5+profile.fade*Math.pow(1-y,2)-profile.highlight*Math.pow(y,2));
-let rgb=hslToRgb(hue,clamp(colorSat),lum);
-const sh=Math.pow(1-smooth(.08,.78,y),1.25),hi=Math.pow(smooth(.22,.96,y),1.35),mid=1-sh-hi*.55;
-rgb[0]+=profile.warm*hi+profile.cool*sh*-0.72+profile.warm*.12*mid;
-rgb[1]+=profile.green*sh+profile.warm*.28*hi+profile.cool*sh*.22;
-rgb[2]+=profile.cool*sh+profile.warm*hi*-0.62-profile.green*sh*.16;
-data[k++]=Math.round(clamp(rgb[0])*255);
-data[k++]=Math.round(clamp(rgb[1])*255);
-data[k++]=Math.round(clamp(rgb[2])*255);
+let R=srgbToLinear(r/(n-1))*profile.whiteBalance[0];
+let G=srgbToLinear(g/(n-1))*profile.whiteBalance[1];
+let B=srgbToLinear(b/(n-1))*profile.whiteBalance[2];
+let lab=linearToOklab(R,G,B),L=lab[0],a=lab[1],bb=lab[2];
+const originalL=L;
+const sh=1-smooth(.16,.62,originalL),hi=smooth(.48,.88,originalL),mid=Math.max(0,1-sh-hi*.72);
+L=clamp((L-.5)*profile.contrast+.5+profile.blackLift+profile.toe*Math.pow(1-originalL,2)-profile.shoulder*Math.pow(originalL,3));
+let chroma=Math.hypot(a,bb),hue=(Math.atan2(bb,a)*180/Math.PI+360)%360;
+let hueMul=0,satMul=0,weightSum=0;
+for(let z=0;z<centers.length;z++){let w=Math.exp(-.5*Math.pow(hueDistance(hue,centers[z])/27,2));hueMul+=w*profile.hueShift[z];satMul+=w*(profile.hueSat[z]-1);weightSum+=w}
+if(weightSum>1e-6){hue+=hueMul/Math.max(1,weightSum);chroma*=1+satMul/Math.max(1,weightSum)}
+chroma*=profile.sat*(1+profile.vibrance*(1-clamp(chroma*3.2)));
+const rad=hue*Math.PI/180;
+a=Math.cos(rad)*chroma+Math.cos(profile.shadowHue*Math.PI/180)*profile.shadowTint*sh+Math.cos(profile.highlightHue*Math.PI/180)*profile.highlightTint*hi+Math.cos(profile.midHue*Math.PI/180)*profile.midTint*mid;
+bb=Math.sin(rad)*chroma+Math.sin(profile.shadowHue*Math.PI/180)*profile.shadowTint*sh+Math.sin(profile.highlightHue*Math.PI/180)*profile.highlightTint*hi+Math.sin(profile.midHue*Math.PI/180)*profile.midTint*mid;
+let out=oklabToLinear(L,a,bb);
+data[k++]=Math.round(clamp(linearToSrgb(out[0]))*255);
+data[k++]=Math.round(clamp(linearToSrgb(out[1]))*255);
+data[k++]=Math.round(clamp(linearToSrgb(out[2]))*255);
 data[k++]=255;
 }
 return {n,width,data};
