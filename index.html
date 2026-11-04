@@ -78,12 +78,9 @@ const sh=Math.pow(1-smooth(.08,.78,y),1.25),hi=Math.pow(smooth(.22,.96,y),1.35),
 rgb[0]+=profile.warm*hi+profile.cool*sh*-0.72+profile.warm*.12*mid;
 rgb[1]+=profile.green*sh+profile.warm*.28*hi+profile.cool*sh*.22;
 rgb[2]+=profile.cool*sh+profile.warm*hi*-0.62-profile.green*sh*.16;
-const out=hslToRgb(hue,clamp(colorSat*(1-.08*sh)),clamp(.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]));
-const baseY=.2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];
-const scale=baseY>1e-5?out[2]/baseY:1;
-data[k++]=Math.round(clamp(rgb[0]*scale)*255);
-data[k++]=Math.round(clamp(rgb[1]*scale)*255);
-data[k++]=Math.round(clamp(rgb[2]*scale)*255);
+data[k++]=Math.round(clamp(rgb[0])*255);
+data[k++]=Math.round(clamp(rgb[1])*255);
+data[k++]=Math.round(clamp(rgb[2])*255);
 data[k++]=255;
 }
 return {n,width,data};
