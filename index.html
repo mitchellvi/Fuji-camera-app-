@@ -28,9 +28,72 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 .action{border:1px solid #4b4a40;background:#292923;color:var(--cream);padding:12px;border-radius:11px;font-weight:600;font-size:12px}.primary{background:var(--cream);color:#1c1b17;border-color:var(--cream)}.sheet-actions{display:flex;gap:8px;margin-top:12px}.sheet-actions button{flex:1}
 .note{text-align:center;color:#89877d;font-size:10px;line-height:1.45;margin:14px 5px 0}
 @media(min-width:600px){.app{padding-top:8px}.stage{max-height:760px}}
+
+/* FP49 — premium camera finish */
+:root{
+ color-scheme:dark;
+ --bg:#10110f;--panel:#1b1c18;--muted:#aaa99e;--cream:#f0ede4;
+ --accent:#c9a36c;--line:rgba(239,235,222,.12);--panel-soft:rgba(31,32,27,.94)
+}
+html,body{background:radial-gradient(ellipse at 50% 8%,#29271f 0%,#171813 38%,#0d0e0c 100%);color:var(--cream)}
+button{font:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+button:active{transform:scale(.975)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.app{max-width:620px;padding-left:16px;padding-right:16px}
+header{height:54px;flex-basis:54px;padding:0 5px}
+.brand{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;letter-spacing:.19em}
+.brand:before{content:"";width:9px;height:9px;border:1.5px solid var(--accent);border-radius:50%;box-shadow:0 0 0 3px rgba(201,163,108,.12),inset 0 0 0 2px var(--bg)}
+.brand span{color:#d9b783}
+.status{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(10,11,9,.42);font-size:9px;letter-spacing:.13em;backdrop-filter:blur(12px)}
+.status:before{content:"";width:6px;height:6px;border-radius:50%;background:#bfa06e;box-shadow:0 0 9px rgba(201,163,108,.45)}
+.stage{border:1px solid rgba(239,235,222,.12);border-radius:25px;background:#070807;box-shadow:0 18px 48px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.05)}
+.stage:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;background:linear-gradient(180deg,rgba(0,0,0,.16),transparent 22%,transparent 76%,rgba(0,0,0,.17))}
+.tag{z-index:2;top:14px;left:14px;padding:8px 11px;border:1px solid rgba(255,255,255,.16);background:rgba(12,13,11,.56);backdrop-filter:blur(18px);font-size:9px;letter-spacing:.15em;color:#e9e5d9}
+.film-tag{left:auto;right:14px;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.placeholder{background:radial-gradient(ellipse at 50% 38%,#24231d 0%,#141510 58%,#0c0d0b 100%)}
+.placeholder b{margin-top:8px;font-size:15px;letter-spacing:.02em}
+.placeholder p{max-width:270px;line-height:1.65}
+.film-strip{flex-basis:78px;height:78px;gap:9px;padding:9px 1px}
+.film-chip{flex:0 0 121px;min-height:58px;padding:10px 12px;border:1px solid rgba(239,235,222,.14);border-radius:15px;background:linear-gradient(145deg,rgba(37,38,32,.94),rgba(19,20,17,.94));box-shadow:0 5px 16px rgba(0,0,0,.16);backdrop-filter:blur(15px)}
+.film-chip b{font-size:9px;letter-spacing:.13em}
+.film-chip small{font-size:9px;letter-spacing:.015em;color:#bdb9ad}
+.film-chip.active{border-color:rgba(211,174,119,.9);background:linear-gradient(145deg,rgba(76,61,41,.96),rgba(39,34,25,.97));box-shadow:inset 0 0 0 1px rgba(211,174,119,.48),0 7px 20px rgba(0,0,0,.26)}
+.strength-bar{height:46px;flex-basis:46px;gap:14px;padding:0 14px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(110deg,rgba(35,36,30,.96),rgba(23,24,20,.96));box-shadow:0 6px 18px rgba(0,0,0,.16)}
+.strength-bar label{font-size:10px;letter-spacing:.09em}
+.strength-bar label b,.adjust label b{color:#d9b783}
+input[type=range]{accent-color:var(--accent);cursor:pointer}
+.sheet{border:1px solid rgba(239,235,222,.13);border-radius:20px;background:linear-gradient(160deg,rgba(35,36,30,.98),rgba(23,24,20,.98));box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.sheet-head{height:60px;min-height:60px}
+.handle{top:8px;width:34px;background:#8b887d}
+.sheet-title{font-size:11px;letter-spacing:.12em}
+.sheet-sub{font-size:10px;color:#aaa79b}
+.sheet-content{padding:0 17px 22px}
+h2{font-size:9px;letter-spacing:.18em;color:#c2bdae}
+.adjust{border:1px solid rgba(239,235,222,.1);border-radius:16px;background:rgba(13,14,12,.35);padding:14px}
+.adjust label{font-size:11px}
+.hint{font-size:10px;line-height:1.55;color:#aaa79c}
+.action{min-height:44px;border:1px solid rgba(239,235,222,.16);border-radius:12px;background:rgba(43,44,37,.92);font-size:11px;letter-spacing:.015em}
+.action.primary{background:#e8dfcc;color:#191813;border-color:#e8dfcc}
+.sheet-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.sheet-actions button{width:100%;min-width:0}
+.note{font-size:9px;line-height:1.6;color:#8f8d82}
+.controls{height:90px;flex-basis:90px;padding:0 28px}
+.round{width:48px;height:48px;border:1px solid rgba(239,235,222,.2);background:linear-gradient(145deg,#303129,#1c1d19);box-shadow:0 5px 16px rgba(0,0,0,.24);font-size:20px}
+.shutter{width:72px;height:72px;border:5px solid #e9e4d8;background:linear-gradient(145deg,#dfbd87,#bd9257);box-shadow:0 0 0 3px #10110f,0 0 0 4px rgba(239,235,222,.36),0 8px 24px rgba(0,0,0,.35)}
+.shutter:disabled,.round:disabled{opacity:.35}
+.photo-review{background:rgba(7,8,7,.97);backdrop-filter:blur(18px)}
+.photo-close{border:1px solid rgba(255,255,255,.25);background:rgba(35,36,30,.94);backdrop-filter:blur(12px)}
+@media(max-height:740px){
+ header{height:46px;flex-basis:46px}
+ .film-strip{height:68px;flex-basis:68px}
+ .controls{height:78px;flex-basis:78px}
+ .shutter{width:64px;height:64px}
+ .sheet.expanded{flex-basis:min(43dvh,390px);height:min(43dvh,390px);max-height:min(43dvh,390px)}
+}
+@media(min-width:600px){.app{max-width:620px;padding-top:12px}.stage{max-height:820px}}
 </style></head><body><div class="app">
 <header><div class="brand">FUJI <span>POCKET</span></div><div class="status" id="cameraStatus" aria-live="polite">CAMERA GEREED</div></header>
-<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><canvas id="fallbackRender" aria-hidden="true"></canvas><span class="tag">FP · 48</span><span class="tag film-tag" id="filmLabel">KODAK GOLD 200</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
+<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><canvas id="fallbackRender" aria-hidden="true"></canvas><span class="tag">FP · 49</span><span class="tag film-tag" id="filmLabel">KODAK GOLD 200</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
 <div class="photo-review" id="photoReview"><button class="photo-close" id="closeReview" aria-label="Sluit foto">×</button><img id="photoPreview" alt="Laatst gemaakte foto"><p>Houd de foto ingedrukt en kies <b>Bewaar in Foto's</b></p></div></main>
 <div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
 <button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm negative</small></button>
@@ -41,12 +104,12 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 </div>
 <div class="strength-bar"><label for="strength">FILMSTERKTE <b id="strengthValue">100%</b></label><input id="strength" type="range" min="0" max="100" value="100" aria-label="Filmprofiel sterkte"></div>
 <section class="sheet" id="sheet"><div class="sheet-head" id="sheetHead"><span class="handle"></span><div><div class="sheet-title">ONTWIKKEL JE BEELD</div><div class="sheet-sub" id="sheetSub">Tik of veeg omhoog voor films & instellingen</div></div><span class="chevron" id="chevron">⌃</span></div>
-<div class="sheet-content" id="sheetContent"><h2>Beeldbewerking</h2><div class="adjust"><p class="hint">0% = originele kleurweergave · 100% = volledige filmsimulatie. Grain en textuur blijven afzonderlijk actief.</p><label for="grain">Film grain <b id="grainValue">28</b></label><input id="grain" type="range" min="0" max="100" value="12">
+<div class="sheet-content" id="sheetContent"><h2>Beeldbewerking</h2><div class="adjust"><p class="hint">0% = originele kleurweergave · 100% = volledige filmsimulatie. Grain en textuur blijven afzonderlijk actief.</p><label for="grain">Filmkorrel <b id="grainValue">0</b></label><input id="grain" type="range" min="0" max="100" value="0">
 <label for="definition">Textuur <b id="definitionValue">0</b></label><input id="definition" type="range" min="-100" max="100" value="0"><p class="hint">Positief = meer microcontrast in fijne en middelgrote details. Negatief = minder textuur. De app verscherpt contouren niet apart.</p>
 <div class="sheet-actions"><button class="action" id="loadLut">Importeer .cube-LUT</button><button class="action" id="loadXmp">Importeer .xmp-preset</button><button class="action" id="reset">Reset</button><button class="action primary" id="closeSheet">Gereed</button></div>
 <input id="lutFile" type="file" accept=".cube,text/plain" hidden><input id="xmpFile" type="file" accept=".xmp,application/xml,text/xml" hidden>
 <p class="hint" id="lutStatus">Importeer ook Lightroom/Camera Raw .xmp-presets. Ondersteunde kleur- en tooninstellingen worden vertaald naar een 3D-LUT; maskers, lokale effecten en lenscorrecties worden niet meegenomen.</p>
-</div><p class="note">De vijf kleurprofielen zijn benaderingen op basis van gepubliceerde Fujifilm X100VI/X-Trans V-receptinstellingen (filmsimulatie, witbalansverschuiving, DR, tooncurve en Color Chrome). Het zijn geen officiële Kodak/Fujifilm-LUT's of exacte spectrale filmreconstructies. Filmkorrel en textuur stel je afzonderlijk in. De iPhone-preview is geen RAW-scan.</p></div></section>
+</div><p class="note">Vier filmlooks zijn gebaseerd op spectrale film-LUT-bronbestanden; Classic Chrome is afgeleid van een creatieve preset. Geen van de profielen is door Kodak of Fujifilm uitgegeven of een exacte reproductie van hun camera-verwerking of een analoge scan. Filmkorrel en textuur zijn afzonderlijk instelbaar.</p></div></section>
 <div class="controls"><button class="round" id="flip" aria-label="Wissel camera">↻</button><button class="shutter" id="shoot" aria-label="Maak foto" disabled></button><button class="round" id="save" aria-label="Bewaar foto" disabled>↓</button></div>
 
 </div>
@@ -56,59 +119,9 @@ h2{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute
 const video=document.getElementById('video'),render=document.getElementById('render'),fallbackRender=document.getElementById('fallbackRender'),fallbackCtx=fallbackRender.getContext('2d',{alpha:false}),gl=render.getContext('webgl2',{alpha:false,antialias:false,preserveDrawingBuffer:true,powerPreference:'high-performance'}),placeholder=document.getElementById('placeholder'),shoot=document.getElementById('shoot'),save=document.getElementById('save'),sheet=document.getElementById('sheet'),sheetHead=document.getElementById('sheetHead');
 const grain=document.getElementById('grain'),definition=document.getElementById('definition'),strength=document.getElementById('strength'),photoReview=document.getElementById('photoReview'),photoPreview=document.getElementById('photoPreview');
 let grainTexture=null,stream=null,facing='environment',preset='gold',lastPhoto=null,raf=0,glReady=false,fallbackActive=false,startingCamera=false,program=null,videoTexture=null,lutTexture=null,locations={},lastW=0,lastH=0;
-const profiles={
-gold:{name:'KODAK GOLD 200',sat:1.055,vibrance:.16,contrast:1.045,toe:.016,shoulder:.19,blackLift:.004,whiteBalance:[1.035,1.012,.965],channelGamma:[.985,1,1.025],dye:[1,.018,.008,.012,1,.018,.006,.025,1],highlightDesat:.19,shadowSat:.96,skinProtect:.34,shadowHue:32,shadowTint:.008,highlightHue:42,highlightTint:.014,midHue:34,midTint:.004,hueShift:[1,0,-5,-8,-3,-7,-1],hueSat:[1.10,1.12,1.03,.84,.80,.86,.92],layerSensitivity:[1.025,.018,-.006,.012,1.006,.012,-.004,.022,.985],layerGamma:[.98,1,1.035],layerToe:[.018,.014,.012],layerShoulder:[.16,.18,.20],printGamma:[1.015,1,.985],printToe:[.004,.005,.006],printShoulder:[.035,.03,.025]},
-fuji:{name:'FUJIFILM · CLASSIC CHROME',sat:.86,vibrance:.13,contrast:1.105,toe:.012,shoulder:.17,blackLift:.002,whiteBalance:[1.012,1.005,1.018],channelGamma:[1.008,1,.992],dye:[1,.025,.012,.018,1,.018,.008,.030,1],highlightDesat:.16,shadowSat:.90,skinProtect:.55,shadowHue:205,shadowTint:.018,highlightHue:48,highlightTint:.008,midHue:30,midTint:.002,hueShift:[-2,-4,-8,-13,-6,-5,-8],hueSat:[.88,.96,.86,.76,.88,.91,.82],layerSensitivity:[1.012,.012,-.004,.008,1.004,.014,-.006,.018,.992],layerGamma:[1.015,1,.985],layerToe:[.012,.010,.014],layerShoulder:[.20,.18,.17],printGamma:[1.025,1,.99],printToe:[.004,.004,.005],printShoulder:[.04,.035,.03]},
-vintage:{name:'VINTAGE · 80S COLOR NEGATIVE',sat:1.075,vibrance:.17,contrast:1.075,toe:.024,shoulder:.17,blackLift:.009,whiteBalance:[1.035,1.012,.982],channelGamma:[.982,1,1.012],dye:[1,.022,.014,.018,1,.020,.012,.026,1],highlightDesat:.12,shadowSat:1.02,skinProtect:.28,shadowHue:215,shadowTint:.018,highlightHue:350,highlightTint:.012,midHue:28,midTint:.006,hueShift:[3,-1,-9,-3,5,-3,5],hueSat:[1.12,1.10,1,1.02,1.12,1.08,1.10],layerSensitivity:[1.035,.022,-.008,.016,1.008,.018,-.006,.025,.978],layerGamma:[.97,1,1.025],layerToe:[.028,.022,.020],layerShoulder:[.18,.19,.20],printGamma:[1.01,1,.985],printToe:[.006,.006,.007],printShoulder:[.035,.03,.03]},
-tokyowarm:{name:'TOKYO WARM · AUTUMN AMBER',sat:1.035,vibrance:.15,contrast:1.105,toe:.020,shoulder:.17,blackLift:.004,whiteBalance:[1.045,1.018,.955],channelGamma:[.988,1,1.025],dye:[1,.020,.010,.014,1,.016,.008,.024,1],highlightDesat:.16,shadowSat:.94,skinProtect:.68,shadowHue:35,shadowTint:.009,highlightHue:43,highlightTint:.018,midHue:38,midTint:.006,hueShift:[-3,-8,-24,-31,-13,-10,-4],hueSat:[.94,1.04,.76,.72,.82,.85,.90],layerSensitivity:[1.035,.020,-.010,.012,1.006,.012,-.008,.022,.972],layerGamma:[.975,1,1.04],layerToe:[.022,.018,.016],layerShoulder:[.19,.18,.20],printGamma:[1.02,1,.98],printToe:[.005,.006,.006],printShoulder:[.04,.035,.03]},
-tokyoshadow:{name:'TOKYO SHADOW · TEAL',sat:1.045,vibrance:.16,contrast:1.15,toe:.012,shoulder:.16,blackLift:.001,whiteBalance:[.992,1.012,1.045],channelGamma:[1.012,1,.985],dye:[1,.022,.012,.016,1,.018,.010,.030,1],highlightDesat:.15,shadowSat:.92,skinProtect:.60,shadowHue:202,shadowTint:.026,highlightHue:43,highlightTint:.014,midHue:28,midTint:.003,hueShift:[-3,-6,-12,-19,-10,-16,-8],hueSat:[.86,.96,.90,.90,1.05,1.10,.88],layerSensitivity:[.988,.014,.010,.010,1.006,.018,.012,.025,1.035],layerGamma:[1.025,1,.975],layerToe:[.014,.012,.012],layerShoulder:[.20,.18,.16],printGamma:[1.03,1,.995],printToe:[.004,.005,.006],printShoulder:[.045,.035,.03]}
-};
-
-profiles.portra={...profiles.gold,name:'KODAK PORTRA 400',sat:.94,vibrance:.11,contrast:1.018,toe:.024,shoulder:.235,blackLift:.006,whiteBalance:[1.025,1.014,.992],channelGamma:[.995,1,1.008],highlightDesat:.24,shadowSat:.94,skinProtect:.78,hueShift:[0,2,-2,-4,0,-1,1],hueSat:[1.01,1.02,.98,.92,.91,.93,.97],layerGamma:[.99,1,1.012],layerToe:[.024,.020,.018],layerShoulder:[.22,.23,.24],printGamma:[1.01,1,.995],printToe:[.006,.006,.006],printShoulder:[.045,.04,.04]};
-profiles.ektar={...profiles.gold,name:'KODAK EKTAR 100',sat:1.17,vibrance:.19,contrast:1.085,toe:.009,shoulder:.145,blackLift:.002,whiteBalance:[1.018,1.004,.985],channelGamma:[.99,1,1.01],highlightDesat:.09,shadowSat:1.02,skinProtect:.43,hueShift:[1,1,-3,-7,-2,-3,0],hueSat:[1.13,1.15,1.10,1.04,1.12,1.15,1.08],layerGamma:[.985,1,1.018],layerToe:[.012,.010,.009],layerShoulder:[.14,.15,.16],printGamma:[1.035,1.01,.995],printToe:[.003,.004,.004],printShoulder:[.025,.025,.02]};
-profiles.pro400h={...profiles.fuji,name:'FUJIFILM PRO 400H',sat:.91,vibrance:.12,contrast:1.025,toe:.024,shoulder:.235,blackLift:.005,whiteBalance:[1.018,1.022,1.012],channelGamma:[1.005,1,.997],highlightDesat:.22,shadowSat:.95,skinProtect:.72,shadowHue:158,shadowTint:.009,highlightHue:48,highlightTint:.009,midHue:142,midTint:.006,hueShift:[-1,-2,-3,-6,2,-2,-2],hueSat:[.94,.98,.92,.84,.92,.94,.90],layerGamma:[1.008,1,.995],layerToe:[.024,.021,.022],layerShoulder:[.23,.23,.24],printGamma:[1.015,1.005,1],printToe:[.006,.006,.006],printShoulder:[.05,.045,.04]};
-delete profiles.vintage;delete profiles.tokyowarm;delete profiles.tokyoshadow;
 const vs='#version 300 es\nin vec2 p;out vec2 uv;void main(){uv=(p+1.0)*0.5;gl_Position=vec4(p,0.0,1.0);}';
 const fs='#version 300 es\nprecision highp float;in vec2 uv;out vec4 outColor;uniform highp sampler2D image;uniform highp sampler2D lutAtlas;uniform int lutN;uniform vec3 lutDomainMin;uniform vec3 lutDomainMax;uniform vec2 texel;uniform vec2 scaleUV;uniform vec2 sourceSize;uniform float grainTexSize;uniform float grain;uniform float definition;uniform float strength;uniform sampler2D grainMap;\nvec3 lutAt(ivec3 p){return texelFetch(lutAtlas,ivec2(p.g*lutN+p.r,p.b),0).rgb;}\nvec3 lutSample(vec3 c){vec3 normalized=clamp((c-lutDomainMin)/max(lutDomainMax-lutDomainMin,vec3(0.00001)),0.0,1.0);vec3 p=normalized*float(lutN-1);ivec3 i=ivec3(floor(p));vec3 f=fract(p);ivec3 i1=min(i+ivec3(1),ivec3(lutN-1));vec3 c000=lutAt(i);vec3 c111=lutAt(i1);vec3 c100=lutAt(ivec3(i1.r,i.g,i.b));vec3 c010=lutAt(ivec3(i.r,i1.g,i.b));vec3 c001=lutAt(ivec3(i.r,i.g,i1.b));vec3 c110=lutAt(ivec3(i1.r,i1.g,i.b));vec3 c101=lutAt(ivec3(i1.r,i.g,i1.b));vec3 c011=lutAt(ivec3(i.r,i1.g,i1.b));if(f.r>=f.g){if(f.g>=f.b)return c000+f.r*(c100-c000)+f.g*(c110-c100)+f.b*(c111-c110);if(f.r>=f.b)return c000+f.r*(c100-c000)+f.b*(c101-c100)+f.g*(c111-c101);return c000+f.b*(c001-c000)+f.r*(c101-c001)+f.g*(c111-c101);}if(f.r>=f.b)return c000+f.g*(c010-c000)+f.r*(c110-c010)+f.b*(c111-c110);if(f.g>=f.b)return c000+f.g*(c010-c000)+f.b*(c011-c010)+f.r*(c111-c011);return c000+f.b*(c001-c000)+f.g*(c011-c001)+f.r*(c111-c011);}\nfloat luma(vec3 c){return dot(c,vec3(.2126,.7152,.0722));}\nvec3 srgbToLinear(vec3 c){return mix(c/12.92,pow((c+.055)/1.055,vec3(2.4)),step(vec3(.04045),c));}\nvec3 linearToSrgb(vec3 c){c=max(c,vec3(0.0));return mix(c*12.92,1.055*pow(c,vec3(1.0/2.4))-.055,step(vec3(.0031308),c));}\nvoid main(){vec2 q=(vec2(uv.x,1.0-uv.y)-0.5)*scaleUV+0.5;vec3 c=texture(image,q).rgb;vec3 profileOutput=lutSample(c);float profileStrength=clamp(strength,0.0,1.0);vec3 graded=linearToSrgb(mix(srgbToLinear(c),srgbToLinear(profileOutput),profileStrength));float d=definition/100.0;vec2 r=texel;float center=max(luma(c),.001);float nearAvg=(luma(texture(image,q+vec2(r.x*2.0,0.0)).rgb)+luma(texture(image,q-vec2(r.x*2.0,0.0)).rgb)+luma(texture(image,q+vec2(0.0,r.y*2.0)).rgb)+luma(texture(image,q-vec2(0.0,r.y*2.0)).rgb))*.25;float wideAvg=(luma(texture(image,q+vec2(r.x*7.0,0.0)).rgb)+luma(texture(image,q-vec2(r.x*7.0,0.0)).rgb)+luma(texture(image,q+vec2(0.0,r.y*7.0)).rgb)+luma(texture(image,q-vec2(0.0,r.y*7.0)).rgb)+luma(texture(image,q+vec2(r.x*5.0,r.y*5.0)).rgb)+luma(texture(image,q+vec2(-r.x*5.0,r.y*5.0)).rgb)+luma(texture(image,q+vec2(r.x*5.0,-r.y*5.0)).rgb)+luma(texture(image,q-vec2(r.x*5.0,r.y*5.0)).rgb))*.125;float textureBand=log2(nearAvg+.015)-log2(wideAvg+.015);float gx=luma(texture(image,q+vec2(r.x,0.0)).rgb)-luma(texture(image,q-vec2(r.x,0.0)).rgb);float gy=luma(texture(image,q+vec2(0.0,r.y)).rgb)-luma(texture(image,q-vec2(0.0,r.y)).rgb);float edgeMask=1.0-smoothstep(.045,.18,length(vec2(gx,gy)));float toneMask=smoothstep(.025,.15,center)*(1.0-smoothstep(.86,.99,center));float textureGain=d*1.65*toneMask*mix(.28,1.0,edgeMask);graded*=exp2(textureBand*textureGain);float lum=luma(graded);vec2 grainUV=q*sourceSize/grainTexSize;float fine=texture(grainMap,grainUV).r-.5;float correlated=(texture(grainMap,grainUV+vec2(1.0/grainTexSize,0.0)).r+texture(grainMap,grainUV-vec2(1.0/grainTexSize,0.0)).r+texture(grainMap,grainUV+vec2(0.0,1.0/grainTexSize)).r+texture(grainMap,grainUV-vec2(0.0,1.0/grainTexSize)).r)*.25-.5;float coarse=texture(grainMap,grainUV*.5+vec2(.173,.319)).r-.5;float shadowGrain=1.0-smoothstep(.055,.34,lum);float midGrain=smoothstep(.16,.38,lum)*(1.0-smoothstep(.62,.84,lum));float highlightGrain=smoothstep(.72,.96,lum);float grainScale=grain/100.0*.12;float n=grainScale*(fine*.80+correlated*.15+coarse*.05)*(shadowGrain*.60+midGrain*1.0+highlightGrain*.32);graded+=vec3(n,n*.99,n*1.01);outColor=vec4(clamp(graded,0.0,1.0),1.0);}';;
 function shader(type,src){const sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
-function srgbToLinear(v){return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4)}
-function linearToSrgb(v){v=Math.max(0,v);return v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055}
-function linearToOklab(r,g,b){
-const l=Math.cbrt(.4122214708*r+.5363325363*g+.0514459929*b);
-const m=Math.cbrt(.2119034982*r+.6806995451*g+.1073969566*b);
-const ss=Math.cbrt(.0883024619*r+.2817188376*g+.6299787005*b);
-return [.2104542553*l+.793617785*m-.0040720468*ss,1.9779984951*l-2.428592205*m+.4505937099*ss,.0259040371*l+.7827717662*m-.808675766*ss]
-}
-function oklabToLinear(L,a,b){
-const l=Math.pow(L+.3963377774*a+.2158037573*b,3);
-const m=Math.pow(L-.1055613458*a-.0638541728*b,3);
-const ss=Math.pow(L-.0894841775*a-1.291485548*b,3);
-return [4.0767416621*l-3.3077115913*m+.2309699292*ss,-1.2684380046*l+2.6097574011*m-.3413193965*ss,-.0041960863*l-.7034186147*m+1.707614701*ss]
-}
-function makeLut(profile){
-const n=49,width=n*n,data=new Uint8Array(width*n*4);let k=0;
-const clamp=v=>Math.max(0,Math.min(1,v)),smooth=(a,b,x)=>{let t=clamp((x-a)/(b-a));return t*t*(3-2*t)},hueDistance=(a,b)=>Math.abs(((a-b+540)%360)-180),centers=[20,52,92,145,195,250,315];
-for(let g=0;g<n;g++)for(let b=0;b<n;b++)for(let r=0;r<n;r++){
-let R=srgbToLinear(r/(n-1))*profile.whiteBalance[0],G=srgbToLinear(g/(n-1))*profile.whiteBalance[1],B=srgbToLinear(b/(n-1))*profile.whiteBalance[2];
-R=Math.pow(Math.max(R,0),profile.channelGamma[0]);G=Math.pow(Math.max(G,0),profile.channelGamma[1]);B=Math.pow(Math.max(B,0),profile.channelGamma[2]);
-const ls=profile.layerSensitivity,lg=profile.layerGamma,lt=profile.layerToe,lh=profile.layerShoulder;
-const spectral=[R*.82+G*.08+B*.02,R*.62+G*.25+B*.02,R*.18+G*.72+B*.05,R*.04+G*.88+B*.12,R*.02+G*.52+B*.42,R*.01+G*.12+B*.82];const curves=profile.spectralLayers||[[.62,.82,.95,.72,.34,.10],[.06,.28,.72,.96,.75,.24],[.03,.12,.42,.80,.98,.76]];const er=Math.max(0,spectral.reduce((v,x,i)=>v+x*curves[0][i],0)),eg=Math.max(0,spectral.reduce((v,x,i)=>v+x*curves[1][i],0)),eb=Math.max(0,spectral.reduce((v,x,i)=>v+x*curves[2][i],0));
-const layer=(v,g,t,h)=>{let x=Math.pow(Math.max(v,0),g);x=(x+t)/(1+t);return x/(1+h*x)};
-const pr=layer(er,lg[0],lt[0],lh[0]),pg=layer(eg,lg[1],lt[1],lh[1]),pb=layer(eb,lg[2],lt[2],lh[2]);
-const dR=-Math.log(Math.max(pr,.0001)),dG=-Math.log(Math.max(pg,.0001)),dB=-Math.log(Math.max(pb,.0001)),m=profile.dye;
-R=Math.exp(-(dR*m[0]+dG*m[1]+dB*m[2]));G=Math.exp(-(dR*m[3]+dG*m[4]+dB*m[5]));B=Math.exp(-(dR*m[6]+dG*m[7]+dB*m[8]));const print=(v,g,t,h)=>{let x=Math.pow(Math.max(v,0),g);x=(x+t)/(1+t);return x/(1+h*x)};R=print(R,profile.printGamma[0],profile.printToe[0],profile.printShoulder[0]);G=print(G,profile.printGamma[1],profile.printToe[1],profile.printShoulder[1]);B=print(B,profile.printGamma[2],profile.printToe[2],profile.printShoulder[2]);
-let lab=linearToOklab(R,G,B),L=lab[0],a=lab[1],bb=lab[2],originalL=L;
-const sh=1-smooth(.12,.58,originalL),hi=smooth(.52,.90,originalL),mid=Math.max(0,1-sh-hi*.78);
-L=clamp((L-.5)*profile.contrast+.5+profile.blackLift+profile.toe*Math.pow(1-originalL,2)-profile.shoulder*Math.pow(originalL,3));
-let chroma=Math.hypot(a,bb),hue=(Math.atan2(bb,a)*180/Math.PI+360)%360,hueMul=0,satMul=0,weightSum=0;
-for(let z=0;z<centers.length;z++){let w=Math.exp(-.5*Math.pow(hueDistance(hue,centers[z])/25,2));hueMul+=w*profile.hueShift[z];satMul+=w*(profile.hueSat[z]-1);weightSum+=w}
-if(weightSum>1e-6){const skin=Math.exp(-.5*Math.pow(hueDistance(hue,38)/20,2))*smooth(.24,.48,originalL)*(1-smooth(.78,.94,originalL));hue+=hueMul/weightSum*(1-skin*profile.skinProtect);chroma*=1+satMul/weightSum*(1-skin*profile.skinProtect*.72)}
-chroma*=profile.sat*(1+profile.vibrance*(1-clamp(chroma*3)));chroma*=1-profile.highlightDesat*hi;chroma*=1+(profile.shadowSat-1)*sh;
-const rad=hue*Math.PI/180;a=Math.cos(rad)*chroma+Math.cos(profile.shadowHue*Math.PI/180)*profile.shadowTint*sh+Math.cos(profile.highlightHue*Math.PI/180)*profile.highlightTint*hi+Math.cos(profile.midHue*Math.PI/180)*profile.midTint*mid;bb=Math.sin(rad)*chroma+Math.sin(profile.shadowHue*Math.PI/180)*profile.shadowTint*sh+Math.sin(profile.highlightHue*Math.PI/180)*profile.highlightTint*hi+Math.sin(profile.midHue*Math.PI/180)*profile.midTint*mid;
-let out=oklabToLinear(L,a,bb);if(out.some(v=>v<0||v>1)){let lo=0,hi=1;for(let q=0;q<7;q++){let m=(lo+hi)*.5,trial=oklabToLinear(L,a*m,bb*m);if(trial.every(v=>v>=0&&v<=1))lo=m;else hi=m}out=oklabToLinear(L,a*lo,bb*lo)}data[k++]=Math.round(clamp(linearToSrgb(out[0]))*255);data[k++]=Math.round(clamp(linearToSrgb(out[1]))*255);data[k++]=Math.round(clamp(linearToSrgb(out[2]))*255);data[k++]=255;
-}
-return {n,width,data};
-}
 function setLutTexture(lut){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,lutTexture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,lut.width,lut.n,0,gl.RGBA,gl.UNSIGNED_BYTE,lut.data);gl.uniform1i(locations.lut,1);gl.uniform1i(locations.lutN,lut.n);gl.uniform3fv(locations.lutDomainMin,lut.domainMin||[0,0,0]);gl.uniform3fv(locations.lutDomainMax,lut.domainMax||[1,1,1])}
 const builtinProfileSpecs={
  gold:{file:'./profiles/gold_200.rgba.b64',title:'KODAK GOLD 200',kind:'rgba'},
@@ -143,7 +156,55 @@ async function uploadLut(name){
  if(glReady&&preset===name&&!customLut){setLutTexture(lut);document.getElementById('filmLabel').textContent=spec.title;}
 }
 let customLut=null;
-function parseCube(source){let n=0,title='CUSTOM LUT',domainMin=[0,0,0],domainMax=[1,1,1],rows=[];for(const raw of source.split(/\r?\n/)){const line=raw.replace(/#.*$/,'').trim();if(!line)continue;let m;if((m=line.match(/^TITLE\s+["']?(.*?)["']?$/i))){title=m[1].trim()||title;continue}if((m=line.match(/^LUT_3D_SIZE\s+(\d+)/i))){n=Number(m[1]);continue}if((m=line.match(/^DOMAIN_MIN\s+(.+)$/i))){domainMin=m[1].trim().split(/\s+/).map(Number);continue}if((m=line.match(/^DOMAIN_MAX\s+(.+)$/i))){domainMax=m[1].trim().split(/\s+/).map(Number);continue}if(/^(LUT_1D_SIZE|LUT_1D_INPUT_RANGE)/i.test(line))continue;const v=line.split(/\s+/).map(Number);if(v.length===3&&v.every(Number.isFinite))rows.push(v)}if(n<2||n>65)throw Error('Ongeldige LUT_3D_SIZE (ondersteund: 2–65).');if(rows.length!==n*n*n)throw Error('Onvolledige LUT: '+rows.length+' van '+(n*n*n)+' kleurregels.');if(domainMin.length!==3||domainMax.length!==3||!domainMin.concat(domainMax).every(Number.isFinite))throw Error('Ongeldige domeinwaarden.');const data=new Uint8Array(n*n*n*4);for(let g=0;g<n;g++)for(let b=0;b<n;b++)for(let r=0;r<n;r++){const src=b*n*n+g*n+r,dst=(g*n*n+b*n+r)*4;for(let c=0;c<3;c++)data[dst+c]=Math.round(Math.max(0,Math.min(1,rows[src][c]))*255);data[dst+3]=255}return {n,width:n*n,data,domainMin,domainMax,title}}
+function activateCustomProfile(lut,kind){
+ customLut=lut;preset='custom';
+ let chip=document.getElementById('customProfileChip');
+ if(!chip){
+  chip=document.createElement('button');chip.type='button';chip.id='customProfileChip';chip.className='film-chip';
+  document.getElementById('filmStrip').appendChild(chip);
+ }
+ chip.textContent=kind+' · '+lut.title;chip.setAttribute('aria-pressed','true');
+ chip.onclick=()=>{
+  customLut=lut;preset='custom';
+  document.querySelectorAll('.film-chip').forEach(b=>{const active=b===chip;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+  if(glReady)uploadCustomLut(lut);
+  else{document.getElementById('filmLabel').textContent=lut.title.toUpperCase().slice(0,28);document.getElementById('lutStatus').textContent='Aangepast profiel klaar. Start de camera om het toe te passen.';}
+ };
+ document.querySelectorAll('.film-chip').forEach(b=>{const active=b===chip;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+ if(glReady)uploadCustomLut(lut);
+ else{document.getElementById('filmLabel').textContent=lut.title.toUpperCase().slice(0,28);document.getElementById('lutStatus').textContent='Aangepast profiel klaar. Start de camera om het toe te passen.';}
+}
+function parseCube(source){
+ let n=0,title='CUSTOM LUT',domainMin=[0,0,0],domainMax=[1,1,1],rows=[],oneDSize=0,reading3D=false;
+ for(const raw of source.split(/\r?\n/)){
+  const line=raw.replace(/#.*$/,'').trim();if(!line)continue;
+  let m;
+  if((m=line.match(/^TITLE\s+["']?(.*?)["']?$/i))){title=m[1].trim()||title;continue}
+  if((m=line.match(/^LUT_1D_SIZE\s+(\d+)/i))){oneDSize=Number(m[1]);continue}
+  if((m=line.match(/^LUT_3D_SIZE\s+(\d+)/i))){n=Number(m[1]);reading3D=true;continue}
+  if((m=line.match(/^DOMAIN_MIN\s+(.+)$/i))){domainMin=m[1].trim().split(/\s+/).map(Number);continue}
+  if((m=line.match(/^DOMAIN_MAX\s+(.+)$/i))){domainMax=m[1].trim().split(/\s+/).map(Number);continue}
+  if(/^(LUT_1D_INPUT_RANGE|LUT_3D_INPUT_RANGE)/i.test(line))continue;
+  const values=line.split(/\s+/).map(Number);
+  if(values.length!==3||!values.every(Number.isFinite))throw Error('Ongeldige .cube-regel: '+line.slice(0,48));
+  if(reading3D)rows.push(values);
+  else if(oneDSize>0)oneDSize--;
+  else throw Error('De .cube bevat kleurregels vóór LUT_3D_SIZE.');
+ }
+ if(n<2||n>65)throw Error('Ongeldige LUT_3D_SIZE (ondersteund: 2–65).');
+ if(rows.length!==n*n*n)throw Error('Onvolledige 3D-LUT: '+rows.length+' van '+(n*n*n)+' kleurregels.');
+ if(domainMin.length!==3||domainMax.length!==3||!domainMin.concat(domainMax).every(Number.isFinite))throw Error('Ongeldige domeinwaarden.');
+ if(domainMax.some((v,i)=>v<=domainMin[i]))throw Error('DOMAIN_MAX moet groter zijn dan DOMAIN_MIN.');
+ const data=new Uint8Array(n*n*n*4);
+ // .cube is ordered red-fastest, then green, then blue; this matches the GPU atlas layout.
+ for(let i=0;i<rows.length;i++){
+  data[i*4]=Math.round(Math.max(0,Math.min(1,rows[i][0]))*255);
+  data[i*4+1]=Math.round(Math.max(0,Math.min(1,rows[i][1]))*255);
+  data[i*4+2]=Math.round(Math.max(0,Math.min(1,rows[i][2]))*255);
+  data[i*4+3]=255;
+ }
+ return {n,width:n*n,data,domainMin,domainMax,title};
+}
 function uploadCustomLut(lut){setLutTexture(lut);document.getElementById('filmLabel').textContent=lut.title.toUpperCase().slice(0,28);document.getElementById('lutStatus').textContent='Actieve LUT: '+lut.title+' ('+lut.n+'³). Kies een filmprofiel om terug te schakelen.'}
 function createGrainTexture(){const size=Math.min(4096,gl.getParameter(gl.MAX_TEXTURE_SIZE)),data=new Uint8Array(size*size),gaussian=new Uint8Array(256);for(let i=0;i<256;i++){let v=0;for(let j=0;j<6;j++)v+=Math.random();gaussian[i]=Math.max(0,Math.min(255,Math.round(127.5+(v-3)*45)))}for(let offset=0;offset<data.length;offset+=65536){const end=Math.min(offset+65536,data.length),chunk=data.subarray(offset,end);if(typeof crypto!=='undefined'&&crypto.getRandomValues)crypto.getRandomValues(chunk);else for(let i=0;i<chunk.length;i++)chunk[i]=Math.floor(Math.random()*256);for(let i=0;i<chunk.length;i++)chunk[i]=gaussian[chunk[i]]}grainTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,grainTexture);gl.texImage2D(gl.TEXTURE_2D,0,gl.R8,size,size,0,gl.RED,gl.UNSIGNED_BYTE,data);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);gl.useProgram(program);gl.uniform1i(locations.grainMap,2);gl.uniform1f(locations.grainTexSize,size)}
 function initGL(){if(!gl)throw Error('WebGL2 wordt niet ondersteund in deze browser.');program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);let p=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(p);gl.vertexAttribPointer(p,2,gl.FLOAT,false,0,0);videoTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,videoTexture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.uniform1i(gl.getUniformLocation(program,'image'),0);lutTexture=gl.createTexture();gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,lutTexture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);locations={strength:gl.getUniformLocation(program,'strength'),lut:gl.getUniformLocation(program,'lutAtlas'),lutN:gl.getUniformLocation(program,'lutN'),lutDomainMin:gl.getUniformLocation(program,'lutDomainMin'),lutDomainMax:gl.getUniformLocation(program,'lutDomainMax'),grainMap:gl.getUniformLocation(program,'grainMap'),texel:gl.getUniformLocation(program,'texel'),scaleUV:gl.getUniformLocation(program,'scaleUV'),sourceSize:gl.getUniformLocation(program,'sourceSize'),grainTexSize:gl.getUniformLocation(program,'grainTexSize'),grain:gl.getUniformLocation(program,'grain'),definition:gl.getUniformLocation(program,'definition')};glReady=true;createGrainTexture();if(customLut)uploadCustomLut(customLut);else uploadLut(preset).catch(err=>{document.getElementById('lutStatus').textContent='Filmprofiel niet geladen: '+err.message})}
@@ -223,10 +284,26 @@ async function startCamera(){
 document.getElementById('start').addEventListener('click',startCamera);
 document.getElementById('loadLut').addEventListener('click',()=>document.getElementById('lutFile').click());
 document.getElementById('loadXmp').addEventListener('click',()=>document.getElementById('xmpFile').click());
-document.getElementById('xmpFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const settings=FujiPocketXmp.parse(await file.text());customLut=FujiPocketXmp.build(settings);let chip=document.getElementById('customProfileChip');if(!chip){chip=document.createElement('button');chip.id='customProfileChip';chip.className='film-chip';document.getElementById('filmStrip').appendChild(chip);}chip.textContent='XMP · '+customLut.title;chip.onclick=()=>{if(glReady)uploadCustomLut(customLut);document.querySelectorAll('.film-chip').forEach(b=>b.classList.toggle('active',b===chip));};chip.click();document.getElementById('lutStatus').textContent='Actieve XMP-preset: '+customLut.title+'. Vertaalde globale toon- en HSL-instellingen worden toegepast op livebeeld en foto.';}catch(err){document.getElementById('lutStatus').textContent='XMP niet geladen: '+err.message;}e.target.value='';});
-document.getElementById('lutFile').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const lut=parseCube(await file.text());customLut=lut;if(glReady)uploadCustomLut(lut);else{document.getElementById('filmLabel').textContent=lut.title.toUpperCase().slice(0,28);document.getElementById('lutStatus').textContent='LUT geladen: '+lut.title+'. Start de camera om deze toe te passen.'}document.querySelectorAll('.film-chip').forEach(b=>b.classList.remove('active'))}catch(err){document.getElementById('lutStatus').textContent='LUT niet geladen: '+err.message}e.target.value=''});
+document.getElementById('xmpFile').addEventListener('change',async e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ try{
+  const settings=FujiPocketXmp.parse(await file.text());
+  const lut=FujiPocketXmp.build(settings);
+  activateCustomProfile(lut,'XMP');
+  document.getElementById('lutStatus').textContent='Actieve XMP-preset: '+lut.title+'. Globale toon- en HSL-instellingen zijn vertaald; lokale maskers en lenscorrecties worden niet meegenomen.';
+ }catch(err){document.getElementById('lutStatus').textContent='XMP niet geladen: '+err.message}
+ e.target.value='';
+});
+document.getElementById('lutFile').addEventListener('change',async e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ try{
+  const lut=parseCube(await file.text());
+  activateCustomProfile(lut,'LUT');
+ }catch(err){document.getElementById('lutStatus').textContent='LUT niet geladen: '+err.message}
+ e.target.value='';
+});
 document.getElementById('flip').addEventListener('click',()=>{facing=facing==='environment'?'user':'environment';startCamera()});
-function choose(name){if(!builtinProfileSpecs[name])return;preset=name;customLut=null;document.getElementById('lutStatus').textContent='Filmprofiel wordt geladen…';document.getElementById('filmLabel').textContent=builtinProfileSpecs[name].title;document.querySelectorAll('.film-chip').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));uploadLut(name).then(()=>{if(preset===name)document.getElementById('lutStatus').textContent='Actief profiel: '+builtinProfileSpecs[name].title+'.'}).catch(err=>{document.getElementById('lutStatus').textContent='Filmprofiel niet geladen: '+err.message;});}
+function choose(name){if(!builtinProfileSpecs[name])return;preset=name;customLut=null;document.getElementById('lutStatus').textContent='Filmprofiel wordt geladen…';document.getElementById('filmLabel').textContent=builtinProfileSpecs[name].title;document.querySelectorAll('.film-chip').forEach(b=>{const active=b.dataset.preset===name;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});uploadLut(name).then(()=>{if(preset===name)document.getElementById('lutStatus').textContent='Actief profiel: '+builtinProfileSpecs[name].title+'.'}).catch(err=>{document.getElementById('lutStatus').textContent='Filmprofiel niet geladen: '+err.message;});}
 document.querySelectorAll('.film-chip').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.preset)));
 function updateLabels(){document.getElementById('grainValue').textContent=grain.value;document.getElementById('definitionValue').textContent=definition.value;document.getElementById('strengthValue').textContent=strength.value+'%'}
 [grain,definition,strength].forEach(el=>el.addEventListener('input',updateLabels));updateLabels();
@@ -262,13 +339,13 @@ async function capture(){
 }
 shoot.addEventListener('click',capture);document.getElementById('closeReview').addEventListener('click',()=>{photoReview.style.display='none'});
 save.addEventListener('click',async()=>{if(!lastPhoto)return;const blob=await(await fetch(lastPhoto)).blob(),file=new File([blob],'fuji-pocket-'+Date.now()+'.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:'Fuji Pocket foto'});return}catch(e){if(e.name==='AbortError')return}}const a=document.createElement('a');a.href=lastPhoto;a.download=file.name;a.click()});
-document.getElementById('reset').addEventListener('click',()=>{grain.value=28;definition.value=0;strength.value=100;updateLabels();choose('gold')});
+document.getElementById('reset').addEventListener('click',()=>{grain.value=0;definition.value=0;strength.value=100;updateLabels();choose('gold')});
 function setSheet(open){sheet.classList.toggle('expanded',open);document.getElementById('chevron').textContent=open?'⌄':'⌃';document.getElementById('sheetSub').textContent=open?'Veeg omlaag of tik op gereed om te sluiten':'Tik of veeg omhoog voor films & instellingen'}
 sheetHead.addEventListener('click',()=>setSheet(!sheet.classList.contains('expanded')));
 document.getElementById('closeSheet').addEventListener('click',()=>setSheet(false));
 let touchY=0;sheetHead.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});sheetHead.addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(dy<-25)setSheet(true);if(dy>25)setSheet(false)},{passive:true});
 document.getElementById('sheetContent').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});document.getElementById('sheetContent').addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(e.target.scrollTop===0&&dy>80)setSheet(false)},{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream){cancelAnimationFrame(raf);raf=0;stream.getTracks().forEach(t=>t.stop());stream=null;video.pause();video.srcObject=null;shoot.disabled=true;document.getElementById('cameraStatus').textContent='CAMERA GEPAUZEERD';placeholder.style.display='flex';placeholder.querySelector('p').textContent='Tik op Camera starten om de camera opnieuw te activeren.'}});window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);raf=0;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}});render.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(raf);raf=0;glReady=false;fallbackActive=true;render.style.display='none';fallbackRender.style.display='block';document.getElementById('cameraStatus').textContent='BASISMODUS · GPU HERSTELD';if(stream)loop()});
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=54',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=55',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
 window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('gold');
 </script></body></html>
