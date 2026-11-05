@@ -93,7 +93,7 @@ h2{font-size:9px;letter-spacing:.18em;color:#c2bdae}
 @media(min-width:600px){.app{max-width:620px;padding-top:12px}.stage{max-height:820px}}
 </style></head><body><div class="app">
 <header><div class="brand">FUJI <span>POCKET</span></div><div class="status" id="cameraStatus" aria-live="polite">CAMERA GEREED</div></header>
-<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><canvas id="fallbackRender" aria-hidden="true"></canvas><span class="tag">FP · 51</span><span class="tag film-tag" id="filmLabel">KODAK GOLD 200</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
+<main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><canvas id="fallbackRender" aria-hidden="true"></canvas><span class="tag">FP · 52</span><span class="tag film-tag" id="filmLabel">KODAK GOLD 200</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
 <div class="photo-review" id="photoReview"><button class="photo-close" id="closeReview" aria-label="Sluit foto">×</button><img id="photoPreview" alt="Laatst gemaakte foto"><p>Houd de foto ingedrukt en kies <b>Bewaar in Foto's</b></p></div></main>
 <div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
 <button class="film-chip" data-preset="warmreference"><b>WARM REFERENCE</b><small>amber · deep shadows</small></button>
@@ -125,7 +125,7 @@ const fs='#version 300 es\nprecision highp float;in vec2 uv;out vec4 outColor;un
 function shader(type,src){const sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
 function setLutTexture(lut){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,lutTexture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,lut.width,lut.n,0,gl.RGBA,gl.UNSIGNED_BYTE,lut.data);gl.uniform1i(locations.lut,1);gl.uniform1i(locations.lutN,lut.n);gl.uniform3fv(locations.lutDomainMin,lut.domainMin||[0,0,0]);gl.uniform3fv(locations.lutDomainMax,lut.domainMax||[1,1,1])}
 const builtinProfileSpecs={
- warmreference:{file:'./profiles/warm_reference.rgba.b64',title:'WARM REFERENCE',kind:'rgba'},
+ warmreference:{title:'WARM REFERENCE',kind:'procedural'},
  gold:{file:'./profiles/gold_200.rgba.b64',title:'KODAK GOLD 200',kind:'rgba'},
  portra:{file:'./profiles/portra_400.rgba.b64',title:'KODAK PORTRA 400',kind:'rgba'},
  ektar:{file:'./profiles/ektar_100.rgba.b64',title:'KODAK EKTAR 100',kind:'rgba'},
@@ -248,7 +248,7 @@ function renderFrame(targetW,targetH,frameSource=video){
   const ctx=fallbackCtx,ratio=frameW/frameH,target=w/h;
   let sx=0,sy=0,sw=frameW,sh=frameH;
   if(ratio>target){sw=sh*target;sx=(frameW-sw)/2}else{sh=sw/target;sy=(frameH-sh)/2}
-  const filters={gold:'saturate(1.08) sepia(.09) contrast(1.04) brightness(1.01)',portra:'saturate(.96) sepia(.035) contrast(1.02) brightness(1.015)',ektar:'saturate(1.20) contrast(1.10)',classicchrome:'saturate(.84) contrast(1.10) sepia(.02)',pro400h:'saturate(.91) contrast(1.025) brightness(1.02)'};
+  const filters={warmreference:'saturate(1.08) sepia(.14) contrast(1.06) brightness(1.015)',gold:'saturate(1.08) sepia(.09) contrast(1.04) brightness(1.01)',portra:'saturate(.96) sepia(.035) contrast(1.02) brightness(1.015)',ektar:'saturate(1.20) contrast(1.10)',classicchrome:'saturate(.84) contrast(1.10) sepia(.02)',pro400h:'saturate(.91) contrast(1.025) brightness(1.02)'};
   ctx.save();ctx.filter='none';ctx.drawImage(frameSource,sx,sy,sw,sh,0,0,w,h);ctx.globalAlpha=Number(strength.value)/100;ctx.filter=filters[preset]||'none';ctx.drawImage(frameSource,sx,sy,sw,sh,0,0,w,h);ctx.restore();return;
  }
  if(!glReady)return;
@@ -372,6 +372,6 @@ document.getElementById('closeSheet').addEventListener('click',()=>setSheet(fals
 let touchY=0;sheetHead.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});sheetHead.addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(dy<-25)setSheet(true);if(dy>25)setSheet(false)},{passive:true});
 document.getElementById('sheetContent').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});document.getElementById('sheetContent').addEventListener('touchend',e=>{let dy=e.changedTouches[0].clientY-touchY;if(e.target.scrollTop===0&&dy>80)setSheet(false)},{passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream){cancelAnimationFrame(raf);raf=0;stream.getTracks().forEach(t=>t.stop());stream=null;video.pause();video.srcObject=null;shoot.disabled=true;document.getElementById('cameraStatus').textContent='CAMERA GEPAUZEERD';placeholder.style.display='flex';placeholder.querySelector('p').textContent='Tik op Camera starten om de camera opnieuw te activeren.'}});window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);raf=0;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}});render.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(raf);raf=0;glReady=false;fallbackActive=true;render.style.display='none';fallbackRender.style.display='block';document.getElementById('cameraStatus').textContent='BASISMODUS · GPU HERSTELD';if(stream)loop()});
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=57',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());navigator.serviceWorker.register('./sw.js?v=58',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{})});
 window.addEventListener('resize',()=>{if(stream)renderFrame()});choose('gold');
 </script></body></html>
