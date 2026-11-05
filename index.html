@@ -96,6 +96,7 @@ h2{font-size:9px;letter-spacing:.18em;color:#c2bdae}
 <main class="stage" id="stage"><video id="video" autoplay playsinline muted></video><canvas id="render"></canvas><canvas id="fallbackRender" aria-hidden="true"></canvas><span class="tag">FP · 49</span><span class="tag film-tag" id="filmLabel">KODAK GOLD 200</span><div class="placeholder" id="placeholder"><div style="font-size:34px">◎</div><b>Jouw pocket camera</b><p>Geef toegang tot je camera om te beginnen met fotograferen.</p><button class="action primary" id="start">Camera starten</button></div>
 <div class="photo-review" id="photoReview"><button class="photo-close" id="closeReview" aria-label="Sluit foto">×</button><img id="photoPreview" alt="Laatst gemaakte foto"><p>Houd de foto ingedrukt en kies <b>Bewaar in Foto's</b></p></div></main>
 <div class="film-strip" id="filmStrip" aria-label="Filmsimulaties">
+<button class="film-chip" data-preset="warmreference"><b>WARM REFERENCE</b><small>amber · deep shadows</small></button>
 <button class="film-chip active" data-preset="gold"><b>KODAK GOLD</b><small>200 · warm negative</small></button>
 <button class="film-chip" data-preset="portra"><b>KODAK PORTRA</b><small>400 · portrait</small></button>
 <button class="film-chip" data-preset="ektar"><b>KODAK EKTAR</b><small>100 · vivid</small></button>
@@ -124,17 +125,42 @@ const fs='#version 300 es\nprecision highp float;in vec2 uv;out vec4 outColor;un
 function shader(type,src){const sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
 function setLutTexture(lut){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,lutTexture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,lut.width,lut.n,0,gl.RGBA,gl.UNSIGNED_BYTE,lut.data);gl.uniform1i(locations.lut,1);gl.uniform1i(locations.lutN,lut.n);gl.uniform3fv(locations.lutDomainMin,lut.domainMin||[0,0,0]);gl.uniform3fv(locations.lutDomainMax,lut.domainMax||[1,1,1])}
 const builtinProfileSpecs={
+ warmreference:{file:'',title:'WARM REFERENCE',kind:'procedural'},
  gold:{file:'./profiles/gold_200.rgba.b64',title:'KODAK GOLD 200',kind:'rgba'},
  portra:{file:'./profiles/portra_400.rgba.b64',title:'KODAK PORTRA 400',kind:'rgba'},
  ektar:{file:'./profiles/ektar_100.rgba.b64',title:'KODAK EKTAR 100',kind:'rgba'},
  classicchrome:{file:'./profiles/classic_chrome.rgba.b64',title:'FUJIFILM CLASSIC CHROME',kind:'rgba'},
  pro400h:{file:'./profiles/pro_400h.rgba.b64',title:'FUJIFILM PRO 400H',kind:'rgba'}
 };
+function buildWarmReferenceLut(title){
+ const n=33,data=new Uint8Array(n*n*n*4),clamp=v=>Math.max(0,Math.min(1,v));
+ const smooth=(a,b,x)=>{let t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+ const lin=v=>v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);
+ const srgb=v=>v<=.0031308?12.92*v:1.055*Math.pow(Math.max(0,v),1/2.4)-.055;
+ let k=0;
+ for(let b=0;b<n;b++)for(let g=0;g<n;g++)for(let r=0;r<n;r++){
+  let R=lin(r/(n-1)),G=lin(g/(n-1)),B=lin(b/(n-1));
+  let y=.2126*R+.7152*G+.0722*B;
+  let toe=.018*(1-smooth(.015,.19,y)),shoulder=.11*smooth(.68,1,y);
+  const curve=v=>clamp((v-.18)*1.105+.18-toe+shoulder);
+  R=curve(R);G=curve(G);B=curve(B);
+  y=.2126*R+.7152*G+.0722*B;
+  let warm=smooth(.17,.78,y),shadow=1-smooth(.02,.24,y);
+  R+=.045*warm+.009*shadow;G+=.012*warm-.004*shadow;B-=.038*warm+.008*shadow;
+  let greenMask=smooth(.025,.13,G-Math.max(R,B))*(1-smooth(.55,.9,y));
+  G-=.025*greenMask;R+=.006*greenMask;B+=.002*greenMask;
+  let lum=.2126*R+.7152*G+.0722*B,sat=1-.055*(1-smooth(.18,.55,y));
+  R=lum+(R-lum)*sat;G=lum+(G-lum)*sat;B=lum+(B-lum)*sat;
+  data[k++]=Math.round(clamp(srgb(R))*255);data[k++]=Math.round(clamp(srgb(G))*255);data[k++]=Math.round(clamp(srgb(B))*255);data[k++]=255;
+ }
+ return {n,width:n*n,data,domainMin:[0,0,0],domainMax:[1,1,1],title};
+}
 const builtinLutCache={},builtinLutPromises={};
 async function getBuiltinLut(name){
  if(builtinLutCache[name])return builtinLutCache[name];
  if(builtinLutPromises[name])return builtinLutPromises[name];
  const spec=builtinProfileSpecs[name];if(!spec)throw Error('Onbekend filmprofiel: '+name);
+ if(spec.kind==='procedural'){const lut=buildWarmReferenceLut(spec.title);builtinLutCache[name]=lut;return lut;}
  builtinLutPromises[name]=(async()=>{
   const response=await fetch(spec.file,{cache:'force-cache'});if(!response.ok)throw Error('Filmprofiel kon niet worden geladen ('+response.status+').');
   let lut;
